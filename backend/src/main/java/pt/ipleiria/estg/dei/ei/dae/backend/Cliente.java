@@ -5,7 +5,7 @@ import jakarta.persistence.criteria.Order;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cliente extends User{
+public class Cliente extends Usuario{
     public List<Order> encomendas;
 
     public Cliente() {
