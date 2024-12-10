@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
         )
 })
 public class Product {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotNull
     private String name;
@@ -21,6 +21,7 @@ public class Product {
     private float price;
     @NotNull
     private int maxQuantityPerVolume;
+    @NotNull
     private String typeOfPackage;
 
     @Version
