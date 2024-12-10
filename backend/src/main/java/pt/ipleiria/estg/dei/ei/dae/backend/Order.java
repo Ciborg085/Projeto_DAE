@@ -37,6 +37,10 @@ public class Order {
         return order_id;
     }
 
+    public void setOrder_id(int order_id) {
+        this.order_id = order_id;
+    }
+
     public int getClient_id() {
         return client_id;
     }
