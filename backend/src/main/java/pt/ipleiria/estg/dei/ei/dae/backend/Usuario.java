@@ -32,6 +32,7 @@ public class Usuario {
         return id;
     }
 
+
     public String getUsername() {
         return username;
     }
@@ -42,6 +43,10 @@ public class Usuario {
 
     public String getEmail() {
         return email;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 
     public void setUsername(String username) {
