@@ -21,7 +21,7 @@ public class ConfigBean {
         System.out.println("Creating startup entities...");
 
         try {
-            productBean.create("Leite", "Pingo Doce", 1.30f, 6, "");
+            productBean.create("Leite", "Pingo Doce", 1.30f, 6, "Normal");
             productBean.create("Cereais Chocolate", "Pingo Doce", 2.3f, 6, "Normal");
         } catch (Exception e) {
             logger.severe(e.getMessage());
