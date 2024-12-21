@@ -1,7 +1,7 @@
 # Projeto DAE
 
 # TODO
-- [ ] 
+- [ ] POST Product API route is not giving the correct HTTP Code (has someonething to do after creating is not able to find the product.id)
 
 
 # Problems for future
