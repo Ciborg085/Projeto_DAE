@@ -1,8 +1,7 @@
-package pt.ipleiria.estg.dei.ei.dae.academics.dtos;
+package pt.ipleiria.estg.dei.ei.dae.backend.dtos;
 
 
-import pt.ipleiria.estg.dei.ei.dae.academics.entities.Sensor;
-import pt.ipleiria.estg.dei.ei.dae.academics.entities.Student;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors.Sensor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -97,16 +96,9 @@ public class SensorDTO implements Serializable {
         this.alert_message = alert_message;
     }
 
-    public static SensorDTO from (Sensor sensor){
+    public static SensorDTO from(Sensor sensor){
         return new SensorDTO(
-                sensor.getId(),
-                sensor.getType(),
-                sensor.getTemperature(),
-                sensor.getAtmosphere_pressure(),
-                sensor.getAcceleration(),
-                sensor.getLatitude(),
-                sensor.getLongitude(),
-                sensor.getAlert_message()
+//                sensor.getId()
         );
     }
 

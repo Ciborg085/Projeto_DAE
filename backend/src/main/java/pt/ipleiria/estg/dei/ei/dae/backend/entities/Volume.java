@@ -1,26 +1,28 @@
-package pt.ipleiria.estg.dei.ei.dae.academics.entities;
+package pt.ipleiria.estg.dei.ei.dae.backend.entities;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import jakarta.persistence.*;
-import jakarta.ws.rs.core.Response;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors.Sensor;
+
+import java.util.List;
 
 @Entity
 public class Volume {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne
+    @OneToMany
     @JoinColumn(name = "sensor_id", nullable = false)
-    private Sensor sensor;
+    private List<Sensor> sensor;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
@@ -37,12 +39,12 @@ public class Volume {
     }
 
     
-    public int getId() {
+    public long getId() {
         return id;
     }
 
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -52,14 +54,6 @@ public class Volume {
 
     public void setOrder(Order order) {
         this.order = order;
-    }
-
-    public Sensor getSensor() {
-        return sensor;
-    }
-
-    public void setSensor(Sensor sensor) {
-        this.sensor = sensor;
     }
 
     public Product getProduct() {

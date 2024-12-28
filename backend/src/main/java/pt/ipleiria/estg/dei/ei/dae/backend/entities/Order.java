@@ -1,17 +1,20 @@
-package pt.ipleiria.estg.dei.ei.dae.academics.entities;
+package pt.ipleiria.estg.dei.ei.dae.backend.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.OrderStatus;
 
 @Entity
+@Table(name="orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int order_id;
+    private long id;
 
+    @ManyToOne
     @NotNull
-    private int client_id;
+    private Client client;
 
     @NotNull
     private String destination;
@@ -23,31 +26,31 @@ public class Order {
     @NotNull
     private OrderStatus order_status = OrderStatus.CREATED;
 
-    // Enum para definir los estados del pedido
-    public enum OrderStatus {
-        CREATED,
-        PROCESSING,
-        SHIPPED,
-        DELIVERED,
-        CANCELED
+
+    // Required
+    public Order() {
+    }
+
+    public Order(long id, Client client, String destination, String payment_method, OrderStatus order_status) {
+        this.id = id;
+        this.client = client;
+        this.destination = destination;
+        this.payment_method = payment_method;
+        this.order_status = order_status;
     }
 
     // Getters y Setters
-    public int getOrder_id() {
-        return order_id;
+    public long getId() {
+        return id;
     }
 
-    public void setOrder_id(int order_id) {
-        this.order_id = order_id;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public int getClient_id() {
-        return client_id;
-    }
+    public Client getClient() { return client; }
 
-    public void setClient_id(int client_id) {
-        this.client_id = client_id;
-    }
+    public void setClient(Client client) { this.client = client; }
 
     public String getDestination() {
         return destination;

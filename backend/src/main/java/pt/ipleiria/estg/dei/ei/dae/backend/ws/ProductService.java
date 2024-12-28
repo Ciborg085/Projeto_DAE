@@ -13,6 +13,7 @@ import java.util.List;
 
 @Path("/products")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class ProductService {
     @EJB
     private ProductBean productBean;

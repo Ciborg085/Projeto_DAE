@@ -26,5 +26,12 @@ public class ConfigBean {
         } catch (Exception e) {
             logger.severe(e.getMessage());
         }
+
+        try {
+//            sensorBean.create(tipo_sensor,id_volume)
+        }
+        catch (Exception e) {
+            logger.severe(e.getMessage());
+        }
     }
 }

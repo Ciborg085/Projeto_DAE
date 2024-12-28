@@ -1,8 +1,8 @@
-package pt.ipleiria.estg.dei.ei.dae.academics.dtos;
+package pt.ipleiria.estg.dei.ei.dae.backend.dtos;
 
-import pt.ipleiria.estg.dei.ei.dae.academics.entities.Order;
-import pt.ipleiria.estg.dei.ei.dae.academics.entities.Sensor;
-import pt.ipleiria.estg.dei.ei.dae.academics.entities.Volume;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors.Sensor;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
 
 import java.util.List;
 import java.util.stream.Collectors;
