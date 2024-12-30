@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.dtos;
 
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Product;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
 
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class VolumeDTO {
-    private int Id;
+    private int id;
     private Order order;
     private Sensor sensor;
     private Product product;
@@ -23,7 +24,7 @@ public class VolumeDTO {
     public VolumeDTO() {}
 
     public VolumeDTO(int Id, Order order, Sensor sensor, int quantity, Volume.Status volume_status) {
-        this.Id = Id;
+        this.id = Id;
         this.order = order;
         this.sensor = sensor;
         this.quantity = quantity;
@@ -31,11 +32,11 @@ public class VolumeDTO {
     }
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int Id) {
-        this.Id = Id;
+        this.id = Id;
     }
 
     public Order getOrder() {
@@ -72,11 +73,11 @@ public class VolumeDTO {
 
     public static VolumeDTO from (Volume volume){
         return new VolumeDTO(
-                volume.getId(),
-                volume.getOrder(),
-                volume.getSensor(),
-                volume.getQuantity(),
-                volume.getVolume_status()
+                //volume.getId(),
+                //volume.getOrder(),
+                //volume.getSensor(),
+                //volume.getQuantity(),
+                //volume.getVolume_status()
         );
     }
 

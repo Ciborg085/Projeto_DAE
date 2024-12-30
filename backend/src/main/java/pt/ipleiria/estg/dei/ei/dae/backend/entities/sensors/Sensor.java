@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
 
 
 @Entity
@@ -12,6 +13,10 @@ public class Sensor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @ManyToOne
+    @NotNull
+    private Volume volume;
 
 //    @NotNull
 //    private String type;
@@ -30,4 +35,19 @@ public class Sensor {
         this.id = id;
     }
 
+    public Volume getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Volume volume) {
+        this.volume = volume;
+    }
+
+    public String getAlert_message() {
+        return alert_message;
+    }
+
+    public void setAlert_message(String alert_message) {
+        this.alert_message = alert_message;
+    }
 }

@@ -10,6 +10,8 @@ public class SensorBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-//    public void create()
+    public void create() {
+
+    }
 
 }

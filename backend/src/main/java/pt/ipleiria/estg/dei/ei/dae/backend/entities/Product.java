@@ -1,9 +1,11 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
+@Table(name = "product")
 @NamedQueries({
         @NamedQuery(
                 name = "getAllProducts",
@@ -11,17 +13,18 @@ import jakarta.validation.constraints.NotNull;
         )
 })
 public class Product {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotNull
+    @NotBlank
     private String name;
-    @NotNull
+    @NotBlank
     private String brand;
     @NotNull
     private float price;
     @NotNull
     private int maxQuantityPerVolume;
-    @NotNull
+    @NotBlank
     private String typeOfPackage;
 
     @Version

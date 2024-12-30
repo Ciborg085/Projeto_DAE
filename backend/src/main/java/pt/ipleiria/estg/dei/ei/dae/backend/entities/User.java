@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "users")
 @Inheritance(strategy= InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role")
 public class User {
 
     @Id

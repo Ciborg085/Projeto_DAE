@@ -5,11 +5,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors.Sensor;
 
 import java.util.List;
 
 @Entity
+@Table(name = "volume")
 public class Volume {
 
     @Id
@@ -20,14 +22,14 @@ public class Volume {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @OneToMany
-    @JoinColumn(name = "sensor_id", nullable = false)
+    @OneToMany(mappedBy = "volume")
     private List<Sensor> sensor;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @NotNull
     private int quantity;
 
     private Status volume_status = Status.Sent ;
@@ -78,6 +80,14 @@ public class Volume {
 
     public void setVolume_status(Status volume_status) {
         this.volume_status = volume_status;
+    }
+
+    public List<Sensor> getSensor() {
+        return sensor;
+    }
+
+    public void setSensor(List<Sensor> sensor) {
+        this.sensor = sensor;
     }
 }
 
