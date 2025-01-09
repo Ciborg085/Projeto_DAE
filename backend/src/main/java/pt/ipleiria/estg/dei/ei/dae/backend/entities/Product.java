@@ -14,7 +14,6 @@ import jakarta.validation.constraints.NotNull;
 })
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotBlank
     private String name;
@@ -23,9 +22,13 @@ public class Product {
     @NotNull
     private float price;
     @NotNull
+    private String category;
+    @NotNull
     private int maxQuantityPerVolume;
     @NotBlank
     private String typeOfPackage;
+    @ManyToOne
+    private Order order;
 
     @Version
     private int version;
@@ -33,12 +36,15 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String brand, float price, int maxQuantityPerVolume, String typeOfPackage) {
+    public Product(long id, String name, String brand, float price, String category, int maxQuantityPerVolume, String typeOfPackage, Order order) {
+        this.id = id;
         this.name = name;
         this.brand = brand;
         this.price = price;
+        this.category = category;
         this.maxQuantityPerVolume = maxQuantityPerVolume;
         this.typeOfPackage = typeOfPackage;
+        this.order = order;
     }
 
 
@@ -74,6 +80,14 @@ public class Product {
         this.price = price;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     public int getMaxQuantityPerVolume() {
         return maxQuantityPerVolume;
     }
@@ -89,4 +103,13 @@ public class Product {
     public void setTypeOfPackage(String typeOfPackage) {
         this.typeOfPackage = typeOfPackage;
     }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
 }

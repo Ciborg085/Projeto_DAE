@@ -1,42 +1,59 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.OrderStatus;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name="orders")
+@NamedQueries(
+        @NamedQuery(
+                name = "getAllOrders",
+                query = "SELECT o FROM Order o ORDER BY o.id"
+        )
+)
+@Table(
+        name="orders"
+)
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
     @NotNull
     private Client client;
 
-    @NotNull
+    @NotBlank
     private String destination;
 
-    @NotNull
-    private String payment_method;
+    @OneToMany(mappedBy = "order")
+    private List<Product> products;
 
     @Enumerated(EnumType.STRING)
     @NotNull
     private OrderStatus order_status = OrderStatus.CREATED;
 
+    @Version
+    private int version;
+
 
     // Required
     public Order() {
+        this.products = new ArrayList<Product>();
     }
 
-    public Order(long id, Client client, String destination, String payment_method, OrderStatus order_status) {
+    public Order(long id, Client client, String destination, OrderStatus order_status) {
         this.id = id;
         this.client = client;
         this.destination = destination;
-        this.payment_method = payment_method;
         this.order_status = order_status;
+        this.products = new ArrayList<Product>();
     }
 
     // Getters y Setters
@@ -60,14 +77,6 @@ public class Order {
         this.destination = destination;
     }
 
-    public String getPayment_method() {
-        return payment_method;
-    }
-
-    public void setPayment_method(String payment_method) {
-        this.payment_method = payment_method;
-    }
-
     public OrderStatus getOrder_status() {
         return order_status;
     }
@@ -75,5 +84,29 @@ public class Order {
     public void setOrder_status(OrderStatus order_status) {
         this.order_status = order_status;
     }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
+    public void addProduct(Product product) throws MyEntityExistsException {
+        if (this.products.contains(product)) {
+            throw new MyEntityExistsException("Product already in the list");
+        }
+        this.products.add(product);
+    }
+
+    public void removeProduct(Product product) throws MyEntityNotFoundException {
+        if (!this.products.contains(product)) {
+            throw new MyEntityNotFoundException("Product not in the list");
+        }
+        this.products.remove(product);
+    }
+
+
 }
 

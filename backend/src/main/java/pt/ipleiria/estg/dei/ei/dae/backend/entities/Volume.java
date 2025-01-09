@@ -6,8 +6,12 @@ import jakarta.persistence.Id;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.VolumeStatus;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors.Sensor;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -23,7 +27,7 @@ public class Volume {
     private Order order;
 
     @OneToMany(mappedBy = "volume")
-    private List<Sensor> sensor;
+    private List<Sensor> sensors;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
@@ -32,19 +36,27 @@ public class Volume {
     @NotNull
     private int quantity;
 
-    private Status volume_status = Status.Sent ;
+    @Version
+    private int version;
 
-    public enum Status {
-        Sent,
-        Aborted,
-        Delivered
+    private VolumeStatus volume_status;
+
+    public Volume() {
+        this.sensors = new LinkedList<Sensor>();
     }
 
-    
+    public Volume(long id, Order order, Product product, int quantity) {
+        this.id = id;
+        this.order = order;
+        this.product = product;
+        this.quantity = quantity;
+        this.volume_status = VolumeStatus.SENT;
+        this.sensors = new LinkedList<Sensor>();
+    }
+
     public long getId() {
         return id;
     }
-
 
     public void setId(long id) {
         this.id = id;
@@ -74,20 +86,34 @@ public class Volume {
         this.quantity = quantity;
     }
 
-    public Status getVolume_status() {
+    public VolumeStatus getVolume_status() {
         return volume_status;
     }
 
-    public void setVolume_status(Status volume_status) {
+    public void setVolume_status(VolumeStatus volume_status) {
         this.volume_status = volume_status;
     }
 
-    public List<Sensor> getSensor() {
-        return sensor;
+    public List<Sensor> getSensors() {
+        return sensors;
     }
 
-    public void setSensor(List<Sensor> sensor) {
-        this.sensor = sensor;
+    public void setSensors(List<Sensor> sensor) {
+        this.sensors = sensor;
+    }
+
+    public void addSensor(Sensor sensor) throws MyEntityExistsException {
+        if (this.sensors.contains(sensor)) {
+            throw new MyEntityExistsException("Already contains this sensor");
+        }
+        this.sensors.add(sensor);
+    }
+
+    public void removeSensor(Sensor sensor) throws MyEntityNotFoundException {
+         if (!this.sensors.contains(sensor)) {
+             throw new MyEntityNotFoundException("Volume does not contain this sensor");
+         }
+         this.sensors.remove(sensor);
     }
 }
 
