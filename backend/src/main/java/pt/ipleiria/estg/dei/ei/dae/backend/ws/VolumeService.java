@@ -48,25 +48,39 @@ public class VolumeService {
     public Response createVolume(VolumeCreatePostDTO volumeCreatePostDTO) throws
             MyEntityExistsException, MyEntityNotFoundException
     {
-        if (volumeCreatePostDTO.getOrder_id().isEmpty() && volumeCreatePostDTO.getOrder().isEmpty()) {
+        if (volumeCreatePostDTO.getOrder_id() == 0 && volumeCreatePostDTO.getOrder() == null) {
             return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Order id or order object are required.")
                     .build();
         }
 
-        if (volumeCreatePostDTO.getOrder().isPresent()) {
+        if (volumeCreatePostDTO.getOrder_id() != 0 && volumeCreatePostDTO.getOrder() != null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Only order_id or order are required.")
+                    .build();
+        }
+
+        Order order = null;
+        if (volumeCreatePostDTO.getOrder() != null) {
             /*
             - Verificar se a encomenda já existe
                 - Se sim, erro
                 - Se não, criar a encomenda
              */
             // create order
-            OrderForVolumeDTO orderDTO = volumeCreatePostDTO.getOrder().get();
+
+            OrderForVolumeDTO orderDTO = volumeCreatePostDTO.getOrder();
+
+            if (orderBean.exists(orderDTO.getOrder_id())) {
+                throw new MyEntityExistsException("Order "+orderDTO.getOrder_id()+" already exists.");
+            }
+
             orderBean.create(
                     orderDTO.getOrder_id(),
                     orderDTO.getClient_username(),
                     orderDTO.getDestination()
             );
-            Order order = orderBean.find(orderDTO.getOrder_id());
+            order = orderBean.find(orderDTO.getOrder_id());
 
             for (ProductFullDTO productFullDTO : orderDTO.getProducts()) {
                 productBean.create(
@@ -82,9 +96,19 @@ public class VolumeService {
             };
 
         }
-        Order order = orderBean.find(volumeCreatePostDTO.getOrder_id().get());
+        if (volumeCreatePostDTO.getOrder_id() != 0) {
+            order = orderBean.find(volumeCreatePostDTO.getOrder_id());
+        }
 
         // TODO criar volume
+        if (order == null) {
+            throw new RuntimeException("order is null");
+        }
+
+        System.out.println("Volume created: ID=" + volumeCreatePostDTO.getVolume_id()
+                + ", Order_id=" + order.getId()
+                + ", Product_id=" + volumeCreatePostDTO.getProduct_id()
+                + ", Quantity=" + volumeCreatePostDTO.getQuantity());
 
         volumeBean.create(
                 volumeCreatePostDTO.getVolume_id(),
@@ -104,9 +128,8 @@ public class VolumeService {
             );
         }
 
-
-
-        return Response.ok().build();
+        return Response.status(Response.Status.CREATED)
+                .build();
     }
 
 }

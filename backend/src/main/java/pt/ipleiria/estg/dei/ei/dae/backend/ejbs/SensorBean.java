@@ -24,6 +24,10 @@ public class SensorBean {
     private VolumeBean volumeBean;
 
     public void create(long id, long volume_id, String type) throws MyEntityNotFoundException, MyEntityExistsException {
+        if (exists(id)) {
+            throw new MyEntityExistsException("Sensor "+id+" already exists.");
+        }
+
         Volume volume = volumeBean.find(volume_id);
 
         switch (type) {
@@ -48,13 +52,14 @@ public class SensorBean {
                 volume.addSensor(multiSensor);
                 break;
             default:
+                System.out.println(type);
                 throw new RuntimeException("Invalid sensor type");
         }
     }
     public Sensor find(long id) throws MyEntityNotFoundException {
         Sensor sensor = entityManager.find(Sensor.class, id);
         if (sensor == null) {
-            throw new MyEntityNotFoundException("sensor "+id+" not found");
+            throw new MyEntityNotFoundException("Sensor "+id+" not found");
         }
         return sensor;
     }
@@ -73,12 +78,42 @@ public class SensorBean {
     }
 
     public void updateValues(long id, Map<String,Object> properties) throws MyEntityNotFoundException{
-        Sensor sensor = entityManager.find(Sensor.class,id);
-        if (sensor == null) {
-            throw new MyEntityNotFoundException("sensor "+id+" not found");
+        if (!exists(id)) {
+            throw new MyEntityNotFoundException("Sensor "+id+" not found.");
         }
+
+        Sensor sensor = entityManager.find(Sensor.class,id);
         entityManager.lock(sensor, LockModeType.OPTIMISTIC);
-        // TODO logic to update values dynamically
+
+        if (sensor instanceof GeoLocationSensor) {
+            if (properties.containsKey("latitude") && properties.containsKey("longitude")) {
+                ((GeoLocationSensor) sensor).setLatitude((Double) properties.get("latitude"));
+                ((GeoLocationSensor) sensor).setLongitude((Double) properties.get("longitude"));
+            }
+        } else if (sensor instanceof PressureSensor) {
+            if (properties.containsKey("pressure")) {
+                ((PressureSensor) sensor).setPressure((Double) properties.get("pressure"));
+            }
+        } else if (sensor instanceof TemperatureSensor) {
+            if (properties.containsKey("temperature")) {
+                ((TemperatureSensor) sensor).setTemperature((Double) properties.get("temperature"));
+            }
+        } else if (sensor instanceof MultiSensor) {
+            if (properties.containsKey("latitude") && properties.containsKey("longitude")) {
+                ((MultiSensor) sensor).setLatitude((Double) properties.get("latitude"));
+                ((MultiSensor) sensor).setLongitude((Double) properties.get("longitude"));
+            }
+            if (properties.containsKey("pressure")) {
+                ((MultiSensor) sensor).setPressure((Double) properties.get("pressure"));
+            }
+            if (properties.containsKey("temperature")) {
+                ((MultiSensor) sensor).setTemperature((Double) properties.get("temperature"));
+            }
+        } else {
+            throw new RuntimeException("Sensor "+sensor.getId()+" is of a invalid type");
+        }
+
+        entityManager.merge(sensor);
     }
 
 

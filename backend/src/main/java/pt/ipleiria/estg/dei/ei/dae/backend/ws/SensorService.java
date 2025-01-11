@@ -7,6 +7,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pt.ipleiria.estg.dei.ei.dae.backend.dtos.SensorDTO;
 import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.SensorBean;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.backend.mappers.SensorMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +28,8 @@ public class SensorService {
      */
     @GET
     @Path("/")
-    public List<SensorDTO> getSensors() {
-
-
-        return new ArrayList<>();
+    public List<SensorDTO> getSensors() throws MyEntityNotFoundException {
+        return SensorDTO.from(sensorBean.findAll());
     }
 
 }

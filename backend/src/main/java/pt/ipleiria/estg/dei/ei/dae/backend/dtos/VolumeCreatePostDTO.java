@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.ejb.EJB;
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.validation.constraints.NotNull;
+
 //TODO
 /*
     Preciso de pensar melhor como fazer isto.
@@ -12,10 +16,16 @@ import java.util.Optional;
  */
 public class VolumeCreatePostDTO implements Serializable {
     // Order_id or Order, only one can be present at a time
+    @NotNull
     private long volume_id;
-    private Optional<Long> order_id;
-    private Optional<OrderForVolumeDTO> order;
+    @JsonbProperty("order_id")
+    private long order_id;
+    @JsonbProperty("order")
+    private OrderForVolumeDTO order;
+    @NotNull
+    @JsonbProperty("product_id")
     private long product_id;
+    @NotNull
     private int quantity;
     private List<SensorForVolumeDTO> sensors;
 
@@ -23,14 +33,13 @@ public class VolumeCreatePostDTO implements Serializable {
         this.sensors = new ArrayList<SensorForVolumeDTO>();
     }
 
-    public VolumeCreatePostDTO(long volume_id, Optional<Long> order_id, Optional<OrderForVolumeDTO> order, long product_id, int quantity, List<SensorForVolumeDTO> sensors) {
+    public VolumeCreatePostDTO(long volume_id, long order_id, OrderForVolumeDTO order, long product_id, int quantity, List<SensorForVolumeDTO> sensors) {
         this.volume_id = volume_id;
         this.order_id = order_id;
         this.order = order;
         this.product_id = product_id;
         this.quantity = quantity;
         this.sensors = sensors;
-        this.sensors = new ArrayList<SensorForVolumeDTO>();
     }
 
     public long getVolume_id() {
@@ -41,19 +50,19 @@ public class VolumeCreatePostDTO implements Serializable {
         this.volume_id = volume_id;
     }
 
-    public Optional<Long> getOrder_id() {
+    public long getOrder_id() {
         return order_id;
     }
 
-    public void setOrder_id(Optional<Long> order_id) {
+    public void setOrder_id(long order_id) {
         this.order_id = order_id;
     }
 
-    public Optional<OrderForVolumeDTO> getOrder() {
+    public OrderForVolumeDTO getOrder() {
         return order;
     }
 
-    public void setOrder(Optional<OrderForVolumeDTO> order) {
+    public void setOrder(OrderForVolumeDTO order) {
         this.order = order;
     }
 

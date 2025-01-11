@@ -8,6 +8,7 @@ import jakarta.persistence.Query;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Product;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
 
 import java.util.ArrayList;
@@ -27,15 +28,20 @@ public class VolumeBean {
 
     //TODO missing error handling
     public void create(long volume_id, long order_id, long product_id, int quantity)
-            throws MyEntityNotFoundException {
+            throws MyEntityNotFoundException, MyEntityExistsException {
+        if (exists(volume_id)) {
+            throw new MyEntityExistsException("Volume "+volume_id+" already exists.");
+        }
+
+        System.out.println("Order_id: "+order_id);
         Order order = orderBean.find(order_id);
         if (order == null) {
-            throw new MyEntityNotFoundException("order "+order_id+" not found");
+            throw new MyEntityNotFoundException("VolumeBean::create: order "+order_id+" not found");
         }
 
         Product product = productBean.find(product_id);
         if (product == null) {
-            throw new MyEntityNotFoundException("product "+product_id+" not found");
+            throw new MyEntityNotFoundException("Volume::create: product "+product_id+" not found");
         }
 
         Volume volume = new Volume(volume_id,order,product,quantity);

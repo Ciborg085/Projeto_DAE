@@ -26,8 +26,7 @@ public class ProductBean {
     public void create(long id, String name, String brand, float price, String category, int maxQuantityPerVolume, String typeOfPackage, long order_id)
             throws MyEntityExistsException, MyEntityNotFoundException {
         if(exists(id)) {
-            throw new MyEntityExistsException(
-                    "Product with name '" + name + "' and brand '" + brand + "' already exists" );
+            throw new MyEntityExistsException( "Product with id "+id+" already exists" );
         }
 
         Order order = orderBean.find(order_id);
@@ -50,7 +49,7 @@ public class ProductBean {
     public Product find(long id) throws MyEntityNotFoundException{
         var product = entityManager.find(Product.class, id);
         if(product == null) {
-            throw new MyEntityNotFoundException("product " + id + " not found");
+            throw new MyEntityNotFoundException("ProductBean::find: product " + id + " not found");
         }
         return product;
     }

@@ -1,7 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.entities;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import jakarta.persistence.*;
@@ -19,7 +17,6 @@ import java.util.List;
 public class Volume {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
