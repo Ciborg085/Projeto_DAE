@@ -1,6 +1,7 @@
 <template>
   <div class="sensor-list">
-    <h2>Lista de Sensores </h2>
+    <h2>Lista de Sensores</h2>
+
     <!-- Exibição de erro -->
     <div v-if="error" class="error">{{ error }}</div>
 
@@ -12,23 +13,22 @@
       <li v-for="sensor in sensors" :key="sensor.id" class="sensor-item">
         <strong>ID:</strong> {{ sensor.id }} |
         <strong>Tipo:</strong> {{ sensor.type }} |
-        <strong>Criação:</strong> {{ formatDate(sensor.created_at) }}
+        <strong>Temperatura:</strong> {{ sensor.properties.temperature }} °C
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-
 import axios from "axios";
-import { useRuntimeConfig } from '#app'; // Importar a configuração de runtime
+import {useRuntimeConfig} from '#app';
 
 export default {
   data() {
     return {
-      sensors: [], // Lista de sensores
-      loading: true, // Estado de carregamento
-      error: null,  // Estado de erro
+      sensors: [],  // Lista de sensores
+      loading: true,  // Estado de carregamento
+      error: null,    // Estado de erro
     };
   },
   methods: {
@@ -39,15 +39,12 @@ export default {
 
         // Acessa o runtimeConfig
         const config = useRuntimeConfig();
-        const apiUrl = config.public.API_URL; // Recupera o API_URL do nuxt.config
+        const apiUrl = config.public.API_URL;
 
-        // Realiza a chamada para a API de sensores sem autenticação
+        // Realiza a chamada para a API de sensores
         const response = await axios.get(`${apiUrl}/sensors`);
 
-        // Diagnóstico detalhado
         console.log("Resposta COMPLETA da API:", response);
-        console.log("Tipo de response.data:", typeof response.data);
-        console.log("Conteúdo de response.data:", response.data);
 
         // Ajuste da verificação de resposta
         let sensorsData = [];
@@ -74,10 +71,7 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
-    formatDate(date) {
-      return new Date(date).toLocaleString();
-    },
+    }
   },
   mounted() {
     this.fetchSensors();
