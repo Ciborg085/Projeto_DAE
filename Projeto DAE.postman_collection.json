@@ -4,7 +4,7 @@
 		"name": "Projeto DAE",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "7619455",
-		"_collection_link": "https://speeding-eclipse-796108.postman.co/workspace/New-Team-Workspace~f14ebcb9-a16a-40c7-bb6d-f6793f99188c/collection/7619455-1aa38a69-ec2e-4be3-bd30-07a73922af4b?action=share&source=collection_link&creator=7619455"
+		"_collection_link": "https://speeding-eclipse-796108.postman.co/workspace/f14ebcb9-a16a-40c7-bb6d-f6793f99188c/collection/7619455-1aa38a69-ec2e-4be3-bd30-07a73922af4b?action=share&source=collection_link&creator=7619455"
 	},
 	"item": [
 		{
@@ -161,6 +161,37 @@
 						"loja",
 						"volumes",
 						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update sensor values",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"properties\": {\n            \"temperature\": 10.2\n        }\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/academics/api/sensors/74",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"academics",
+						"api",
+						"sensors",
+						"74"
 					]
 				}
 			},
