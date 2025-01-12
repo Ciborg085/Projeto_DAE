@@ -3,10 +3,9 @@
     <!-- Componente de Cabeçalho -->
     <Header />
 
-    <!-- Conteúdo principal -->
+    <!-- Conteúdo principal renderizado dinamicamente -->
     <main class="app-content">
-      <!-- Lista de Sensores -->
-      <SensorList />
+      <NuxtPage />
     </main>
 
     <!-- Rodapé global -->
@@ -16,17 +15,9 @@
   </div>
 </template>
 
-<script>
-import Header from "~/components/Header.vue";
-import SensorList from "~/components/SensorList.vue";
-
-export default {
-  name: "App",
-  components: {
-    Header,
-    SensorList,
-  },
-};
+<script setup>
+// Importando o componente de cabeçalho
+import Header from '~/components/Header.vue';
 </script>
 
 <style scoped>

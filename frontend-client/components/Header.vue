@@ -10,20 +10,15 @@
       <!-- Menu de navegação -->
       <nav class="app-nav">
         <ul>
-          <li>
-            <NuxtLink to="/" exact-active-class="active-link">Início</NuxtLink>
-          </li>
-          <li>
-            <NuxtLink to="/sensores" exact-active-class="active-link">Sensores</NuxtLink>
-          </li>
-          <li>
-            <NuxtLink to="/encomendas" exact-active-class="active-link">Encomendas</NuxtLink>
-          </li>
-          <li>
-            <NuxtLink to="/gestao" exact-active-class="active-link">Gestão</NuxtLink>
-          </li>
+          <li><NuxtLink to="/" exact-active-class="active-link">Início</NuxtLink></li>
+          <li><NuxtLink to="/sensores" exact-active-class="active-link">Sensores</NuxtLink></li>
+          <li><NuxtLink to="/produtos" exact-active-class="active-link">Produtos</NuxtLink></li>
+          <li><NuxtLink to="/encomendas" exact-active-class="active-link">Encomendas</NuxtLink></li>
+          <li><NuxtLink to="/gestao" exact-active-class="active-link">Gestão</NuxtLink></li>
         </ul>
       </nav>
+
+
 
       <!-- Login/Perfil -->
       <div class="user-actions">
