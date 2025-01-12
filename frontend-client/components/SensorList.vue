@@ -19,14 +19,16 @@
 </template>
 
 <script>
+
 import axios from "axios";
+import { useRuntimeConfig } from '#app'; // Importar a configuração de runtime
 
 export default {
   data() {
     return {
       sensors: [], // Lista de sensores
       loading: true, // Estado de carregamento
-      error: null, // Estado de erro
+      error: null,  // Estado de erro
     };
   },
   methods: {
@@ -35,36 +37,49 @@ export default {
         this.loading = true;
         this.error = null;
 
-        // Realiza a chamada para a API de sensores
-        const response = await axios.get("/api/sensors", {
-          headers: {
-            "end-user-token": "SEU_TOKEN_AQUI", // Substitua pelo token correto
-          },
-          params: {
-            type: "acceleration sensor", // Pode ajustar se for necessário filtrar
-          },
-        });
+        // Acessa o runtimeConfig
+        const config = useRuntimeConfig();
+        const apiUrl = config.public.API_URL; // Recupera o API_URL do nuxt.config
 
-        console.log("Resposta da API:", response); // Exibe a resposta completa da API no console
-        console.log("Data da API:", response.data); // Exibe os dados da propriedade `data`
+        // Realiza a chamada para a API de sensores sem autenticação
+        const response = await axios.get(`${apiUrl}/sensors`);
 
-        // Configura os sensores para exibir apenas os 10 primeiros
-        this.sensors = response.data.sensors.slice(0, 10);
+        // Diagnóstico detalhado
+        console.log("Resposta COMPLETA da API:", response);
+        console.log("Tipo de response.data:", typeof response.data);
+        console.log("Conteúdo de response.data:", response.data);
+
+        // Ajuste da verificação de resposta
+        let sensorsData = [];
+
+        if (Array.isArray(response.data)) {
+          sensorsData = response.data;
+        } else if (response.data && Array.isArray(response.data.sensors)) {
+          sensorsData = response.data.sensors;
+        } else if (response.data && response.data.length) {
+          sensorsData = Object.values(response.data).flat();
+        } else {
+          throw new Error("Formato inesperado da resposta da API.");
+        }
+
+        this.sensors = sensorsData.slice(0, 10);
+
+        if (this.sensors.length === 0) {
+          this.error = "Nenhum sensor encontrado.";
+        }
+
       } catch (err) {
-        // Caso ocorra erro na solicitação
         this.error = "Erro ao carregar os sensores! Verifique as permissões.";
-        console.error(err);
+        console.error("Erro ao buscar sensores:", err);
       } finally {
         this.loading = false;
       }
     },
     formatDate(date) {
-      // Formata a data para algo mais legível
       return new Date(date).toLocaleString();
     },
   },
   mounted() {
-    // Busca os sensores ao montar o componente
     this.fetchSensors();
   },
 };
