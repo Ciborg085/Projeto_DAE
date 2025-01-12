@@ -100,7 +100,6 @@ public class VolumeService {
             order = orderBean.find(volumeCreatePostDTO.getOrder_id());
         }
 
-        // TODO criar volume
         if (order == null) {
             throw new RuntimeException("order is null");
         }
@@ -119,7 +118,6 @@ public class VolumeService {
 
         Volume volume = volumeBean.find(volumeCreatePostDTO.getVolume_id());
 
-        // TODO criar e adicionar sensores
         for (SensorForVolumeDTO sensorForVolumeDTO : volumeCreatePostDTO.getSensors()) {
             sensorBean.create(
                     sensorForVolumeDTO.getId(),

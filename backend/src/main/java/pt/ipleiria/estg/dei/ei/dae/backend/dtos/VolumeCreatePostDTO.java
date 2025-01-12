@@ -16,16 +16,10 @@ import jakarta.validation.constraints.NotNull;
  */
 public class VolumeCreatePostDTO implements Serializable {
     // Order_id or Order, only one can be present at a time
-    @NotNull
     private long volume_id;
-    @JsonbProperty("order_id")
     private long order_id;
-    @JsonbProperty("order")
     private OrderForVolumeDTO order;
-    @NotNull
-    @JsonbProperty("product_id")
     private long product_id;
-    @NotNull
     private int quantity;
     private List<SensorForVolumeDTO> sensors;
 

@@ -22,6 +22,9 @@ public abstract class Sensor {
     @Id
     private long id;
 
+    @Version
+    private int version;
+
     @ManyToOne
     @NotNull
     private Volume volume;
