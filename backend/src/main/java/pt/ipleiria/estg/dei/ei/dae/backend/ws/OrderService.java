@@ -44,6 +44,19 @@ public class OrderService {
                 .build();
     }
 
+    @GET
+    @Path("/{order_id}/volumes")
+    public void getOrderWithVolumes(@PathParam("order_id") long order_id) {
+
+    }
+    @GET
+    @Path("/{order_id}/products")
+    public void getOrderWithProducts(@PathParam("order_id") long order_id) {
+
+    }
+
+
+
     @POST
     @Path("/")
     public Response createOrder(OrderForVolumeDTO orderDTO)
