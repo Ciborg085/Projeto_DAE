@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 
 public class ProductSummaryDTO implements Serializable {
     private long id;
+    private String name;
+    private String brand;
+    private int quantity;
 
     public ProductSummaryDTO() {
     }
