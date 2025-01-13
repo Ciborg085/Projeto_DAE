@@ -23,7 +23,7 @@ public class ProductBean {
     @EJB
     private OrderBean orderBean;
 
-    public void create(long id, String name, String brand, float price, String category, int maxQuantityPerVolume, String typeOfPackage, long order_id)
+    public void create(long id, String name, String brand, float price,int quantityOrdered, String category, int maxQuantityPerVolume, String typeOfPackage, long order_id)
             throws MyEntityExistsException, MyEntityNotFoundException {
         if(exists(id)) {
             throw new MyEntityExistsException( "Product with id "+id+" already exists" );
@@ -31,7 +31,7 @@ public class ProductBean {
 
         Order order = orderBean.find(order_id);
 
-        var product = new Product(id, name, brand, price, category, maxQuantityPerVolume, typeOfPackage, order);
+        var product = new Product(id, name, brand, price, quantityOrdered, category , maxQuantityPerVolume, typeOfPackage, order);
         entityManager.persist(product);
         order.addProduct(product);
         entityManager.flush();

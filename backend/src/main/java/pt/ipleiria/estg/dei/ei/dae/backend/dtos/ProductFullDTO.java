@@ -11,6 +11,7 @@ public class ProductFullDTO implements Serializable {
     private String name;
     private String brand;
     private float price;
+    private int quantityOrdered;
     private String category;
     private int maxQuantityPerVolume;
     private String typeOfPackage;
@@ -18,11 +19,12 @@ public class ProductFullDTO implements Serializable {
 
     public ProductFullDTO() { }
 
-    public ProductFullDTO(long id, String name, String brand, float price, String category, int maxQuantityPerVolume, String typeOfPackage, long order_id) {
+    public ProductFullDTO(long id, String name, String brand, float price,int quantityOrdered, String category, int maxQuantityPerVolume, String typeOfPackage, long order_id) {
         this.id = id;
         this.name = name;
         this.brand = brand;
         this.price = price;
+        this.quantityOrdered = quantityOrdered;
         this.category = category;
         this.maxQuantityPerVolume = maxQuantityPerVolume;
         this.typeOfPackage = typeOfPackage;
@@ -59,6 +61,14 @@ public class ProductFullDTO implements Serializable {
 
     public void setPrice(float price) {
         this.price = price;
+    }
+
+    public int getQuantityOrdered() {
+        return quantityOrdered;
+    }
+
+    public void setQuantityOrdered(int quantityOrdered) {
+        this.quantityOrdered = quantityOrdered;
     }
 
     public String getCategory() {
@@ -99,6 +109,7 @@ public class ProductFullDTO implements Serializable {
                 product.getName(),
                 product.getBrand(),
                 product.getPrice(),
+                product.getQuantityOrdered(),
                 product.getCategory(),
                 product.getMaxQuantityPerVolume(),
                 product.getTypeOfPackage(),
