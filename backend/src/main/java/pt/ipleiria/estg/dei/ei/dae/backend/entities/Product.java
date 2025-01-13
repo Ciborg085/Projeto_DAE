@@ -22,6 +22,8 @@ public class Product {
     @NotNull
     private float price;
     @NotNull
+    private int quantityOrdered;
+    @NotNull
     private String category;
     @NotNull
     private int maxQuantityPerVolume;
@@ -36,11 +38,12 @@ public class Product {
     public Product() {
     }
 
-    public Product(long id, String name, String brand, float price, String category, int maxQuantityPerVolume, String typeOfPackage, Order order) {
+    public Product(long id, String name, String brand, float price,int quantityOrdered, String category, int maxQuantityPerVolume, String typeOfPackage, Order order) {
         this.id = id;
         this.name = name;
         this.brand = brand;
         this.price = price;
+        this.quantityOrdered = quantityOrdered;
         this.category = category;
         this.maxQuantityPerVolume = maxQuantityPerVolume;
         this.typeOfPackage = typeOfPackage;
@@ -80,6 +83,14 @@ public class Product {
         this.price = price;
     }
 
+    public int getQuantityOrdered() {
+        return quantityOrdered;
+    }
+
+    public void setQuantityOrdered(int quantityOrdered) {
+        this.quantityOrdered = quantityOrdered;
+    }
+
     public String getCategory() {
         return category;
     }
@@ -112,4 +123,11 @@ public class Product {
         this.order = order;
     }
 
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
 }

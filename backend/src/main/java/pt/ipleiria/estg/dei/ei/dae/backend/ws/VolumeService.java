@@ -88,6 +88,7 @@ public class VolumeService {
                         productFullDTO.getName(),
                         productFullDTO.getBrand(),
                         productFullDTO.getPrice(),
+                        productFullDTO.getQuantityOrdered(),
                         productFullDTO.getCategory(),
                         productFullDTO.getMaxQuantityPerVolume(),
                         productFullDTO.getTypeOfPackage(),
