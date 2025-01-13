@@ -15,7 +15,6 @@ import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.SensorType;
 })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "sensor_type", discriminatorType = DiscriminatorType.STRING)
-
 @Table(name = "sensors")
 public abstract class Sensor {
 
@@ -53,5 +52,13 @@ public abstract class Sensor {
 
     public void setVolume(Volume volume) {
         this.volume = volume;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 }
