@@ -15,6 +15,9 @@ down:
 down-all:
 	docker compose down --rmi all --volumes
 
+stop:
+	docker compose stop
+
 build:
 	mvn clean package
 

@@ -1,29 +1,26 @@
-package pt.ipleiria.estg.dei.ei.dae.academics.dtos;
+package pt.ipleiria.estg.dei.ei.dae.backend.dtos;
 
-import pt.ipleiria.estg.dei.ei.dae.academics.entities.Order;
-import pt.ipleiria.estg.dei.ei.dae.academics.entities.Sensor;
-import pt.ipleiria.estg.dei.ei.dae.academics.entities.Volume;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Product;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.VolumeStatus;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors.Sensor;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class VolumeDTO {
-    private int Id;
+    private int id;
     private Order order;
     private Sensor sensor;
     private Product product;
     private int quantity;
-    private Volume.Status volume_status = Volume.Status.Sent ;
+    private VolumeStatus volume_status = VolumeStatus.SENT ;
 
-    public enum Status {
-        Sent,
-        Aborted,
-        Delivered
-    }
     public VolumeDTO() {}
 
-    public VolumeDTO(int Id, Order order, Sensor sensor, int quantity, Volume.Status volume_status) {
-        this.Id = Id;
+    public VolumeDTO(int Id, Order order, Sensor sensor, int quantity, VolumeStatus volume_status) {
+        this.id = Id;
         this.order = order;
         this.sensor = sensor;
         this.quantity = quantity;
@@ -31,11 +28,11 @@ public class VolumeDTO {
     }
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int Id) {
-        this.Id = Id;
+        this.id = Id;
     }
 
     public Order getOrder() {
@@ -62,21 +59,21 @@ public class VolumeDTO {
         this.quantity = quantity;
     }
 
-    public Volume.Status getVolume_status() {
+    public VolumeStatus getVolume_status() {
         return volume_status;
     }
 
-    public void setVolume_status(Volume.Status volume_status) {
+    public void setVolume_status(VolumeStatus volume_status) {
         this.volume_status = volume_status;
     }
 
     public static VolumeDTO from (Volume volume){
         return new VolumeDTO(
-                volume.getId(),
-                volume.getOrder(),
-                volume.getSensor(),
-                volume.getQuantity(),
-                volume.getVolume_status()
+                //volume.getId(),
+                //volume.getOrder(),
+                //volume.getSensor(),
+                //volume.getQuantity(),
+                //volume.getVolume_status()
         );
     }
 

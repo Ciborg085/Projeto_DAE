@@ -1,0 +1,55 @@
+package pt.ipleiria.estg.dei.ei.dae.backend.ejbs;
+
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Client;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.OrderStatus;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
+
+import java.util.List;
+
+@Stateless
+public class OrderBean {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @EJB
+    private ClientBean clientBean;
+
+    public void create(long id,String client_username, String destination)
+            throws MyEntityNotFoundException, MyEntityExistsException {
+        if (exists(id)) {
+            throw new MyEntityExistsException("Order already exists");
+        }
+        Client client = clientBean.find(client_username);
+        Order order = new Order(id,client,destination, OrderStatus.CREATED);
+        entityManager.persist(order);
+    }
+
+    public Order find(long id) throws MyEntityNotFoundException {
+        Order order = entityManager.find(Order.class, id);
+        if (order == null)  {
+            throw new MyEntityNotFoundException("OrderBean::find: Order " + id + " not found");
+        }
+        return order;
+    }
+
+    public boolean exists(long id) {
+        Query query = entityManager.createQuery(
+                "SELECT COUNT(o.id) FROM Order o WHERE o.id = :id",
+                Long.class
+        );
+        query.setParameter("id",id);
+        return (Long)query.getSingleResult() > 0L;
+    }
+
+    public List<Order> findAll() {
+        return entityManager.createNamedQuery("getAllOrders", Order.class).getResultList();
+    }
+
+}

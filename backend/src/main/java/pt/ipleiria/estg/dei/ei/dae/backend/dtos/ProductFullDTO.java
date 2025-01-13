@@ -1,30 +1,34 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.dtos;
 
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Product;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ProductDTO implements Serializable {
+public class ProductFullDTO implements Serializable {
     private long id;
     private String name;
     private String brand;
     private float price;
+    private int quantityOrdered;
+    private String category;
     private int maxQuantityPerVolume;
     private String typeOfPackage;
+    private long order_id;
 
-    public ProductDTO() { }
+    public ProductFullDTO() { }
 
-    public ProductDTO(long id,String name, String brand, float price, int maxQuantityPerVolume, String typeOfPackage) {
+    public ProductFullDTO(long id, String name, String brand, float price,int quantityOrdered, String category, int maxQuantityPerVolume, String typeOfPackage, long order_id) {
         this.id = id;
         this.name = name;
         this.brand = brand;
         this.price = price;
+        this.quantityOrdered = quantityOrdered;
+        this.category = category;
         this.maxQuantityPerVolume = maxQuantityPerVolume;
         this.typeOfPackage = typeOfPackage;
+        this.order_id = order_id;
     }
 
     public long getId() {
@@ -59,6 +63,22 @@ public class ProductDTO implements Serializable {
         this.price = price;
     }
 
+    public int getQuantityOrdered() {
+        return quantityOrdered;
+    }
+
+    public void setQuantityOrdered(int quantityOrdered) {
+        this.quantityOrdered = quantityOrdered;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     public int getMaxQuantityPerVolume() {
         return maxQuantityPerVolume;
     }
@@ -75,17 +95,28 @@ public class ProductDTO implements Serializable {
         this.typeOfPackage = typeOfPackage;
     }
 
-    public static ProductDTO from(Product product) {
-        return new ProductDTO(
+    public long getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(long order_id) {
+        this.order_id = order_id;
+    }
+
+    public static ProductFullDTO from(Product product) {
+        return new ProductFullDTO(
                 product.getId(),
                 product.getName(),
                 product.getBrand(),
                 product.getPrice(),
+                product.getQuantityOrdered(),
+                product.getCategory(),
                 product.getMaxQuantityPerVolume(),
-                product.getTypeOfPackage()
+                product.getTypeOfPackage(),
+                product.getOrder().getId()
         );
     }
-    public static List<ProductDTO> from(List<Product> products) {
-        return products.stream().map(ProductDTO::from).collect(Collectors.toList());
+    public static List<ProductFullDTO> from(List<Product> products) {
+        return products.stream().map(ProductFullDTO::from).collect(Collectors.toList());
     }
 }

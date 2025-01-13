@@ -1,11 +1,13 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ejbs;
 
 import jakarta.ejb.ApplicationException;
+import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Product;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
@@ -18,31 +20,36 @@ public class ProductBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public void create(String name, String brand, float price, int maxQuantityPerVolume, String typeOfPackage)
-            throws MyEntityExistsException {
-        if(exists(name,brand)) {
-            throw new MyEntityExistsException(
-                    "Product with name '" + name + "' and brand '" + brand + "' already exists" );
+    @EJB
+    private OrderBean orderBean;
+
+    public void create(long id, String name, String brand, float price,int quantityOrdered, String category, int maxQuantityPerVolume, String typeOfPackage, long order_id)
+            throws MyEntityExistsException, MyEntityNotFoundException {
+        if(exists(id)) {
+            throw new MyEntityExistsException( "Product with id "+id+" already exists" );
         }
 
-        var product = new Product(name, brand, price, maxQuantityPerVolume, typeOfPackage);
+        Order order = orderBean.find(order_id);
+
+        var product = new Product(id, name, brand, price, quantityOrdered, category , maxQuantityPerVolume, typeOfPackage, order);
         entityManager.persist(product);
+        order.addProduct(product);
+        entityManager.flush();
     }
 
-    public boolean exists(String name, String brand) {
+    public boolean exists(long id) {
         Query query = entityManager.createQuery(
-                "SELECT COUNT(p.name) FROM Product p WHERE p.name = :name AND p.brand = :brand",
+                "SELECT COUNT(p.id) FROM Product p WHERE p.id = :id",
                 Long.class
         );
-        query.setParameter("name",name);
-        query.setParameter("brand",brand);
+        query.setParameter("id",id);
         return (Long)query.getSingleResult() > 0L;
     }
 
     public Product find(long id) throws MyEntityNotFoundException{
         var product = entityManager.find(Product.class, id);
         if(product == null) {
-            throw new MyEntityNotFoundException("product " + id + " not found");
+            throw new MyEntityNotFoundException("ProductBean::find: product " + id + " not found");
         }
         return product;
     }
@@ -64,9 +71,9 @@ public class ProductBean {
             throw new MyEntityNotFoundException("Product with id " + id + " not found");
         }
 
-        if (exists(name,brand)) {
+        if (exists(id)) {
             throw new MyEntityExistsException(
-                    "Product with name '" + name + "' and brand '" + brand + "' already exists" );
+                    "Product with id "+id+" already exists");
         }
 
         entityManager.lock(product, LockModeType.OPTIMISTIC);
