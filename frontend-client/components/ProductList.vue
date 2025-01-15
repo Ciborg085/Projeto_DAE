@@ -4,6 +4,7 @@
 
     <div v-if="loading">A carregar produtos...</div>
     <div v-else-if="error">Erro ao carregar produtos.</div>
+
     <ul v-else>
       <li v-for="product in products" :key="product.id" class="product-item">
         <h3>{{ product.name }}</h3>
@@ -35,7 +36,6 @@ const fetchProducts = async () => {
     const data = await response.json();
     products.value = data;
   } catch (err) {
-    console.error(err);
     error.value = true;
   } finally {
     loading.value = false;
@@ -49,7 +49,13 @@ onMounted(() => {
 
 <style scoped>
 .product-list {
-  padding: 1rem;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto; /* Centraliza horizontalmente */
+  text-align: center; /* Centraliza o conteúdo */
 }
 
 .product-item {
@@ -58,6 +64,7 @@ onMounted(() => {
   margin-bottom: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: left;
 }
 
 .product-item h3 {
@@ -67,5 +74,6 @@ onMounted(() => {
 
 .product-item p {
   margin: 0.2rem 0;
+  color: #555;
 }
 </style>
