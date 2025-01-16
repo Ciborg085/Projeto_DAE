@@ -13,6 +13,15 @@ import java.util.stream.Collectors;
 public class OrderWithProductsDTO {
 
     private long id;
+    /*
+    isto n funciona for some reason :|
+
+    Erro:
+        Explicit usage of Jackson annotation in a Jakarta RESTful Web Services deployment; the system will disable Jakarta JSON Binding processing for the current deployment.
+        Consider setting the 'resteasy.preferJacksonOverJsonB' property to 'false' to restore Jakarta JSON Binding.
+
+     Estranho porque eu meti este setting que estão a pedir :|
+     */
     @JsonbProperty("client_username")
     private String clientUsername;
 
