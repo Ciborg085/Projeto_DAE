@@ -30,6 +30,7 @@ public class Product {
     @NotBlank
     private String typeOfPackage;
     @ManyToOne
+    @JoinColumn(name = "order_id")
     private Order order;
 
     @Version
