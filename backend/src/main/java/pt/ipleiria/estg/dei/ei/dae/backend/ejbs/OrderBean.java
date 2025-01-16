@@ -5,6 +5,7 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.OrderStatus;
@@ -38,6 +39,11 @@ public class OrderBean {
         }
         return order;
     }
+    public Order findWithProducts(long id) throws MyEntityNotFoundException {
+        Order order = this.find(id);
+        Hibernate.initialize(order.getProducts());
+        return order;
+    }
 
     public boolean exists(long id) {
         Query query = entityManager.createQuery(
@@ -51,5 +57,10 @@ public class OrderBean {
     public List<Order> findAll() {
         return entityManager.createNamedQuery("getAllOrders", Order.class).getResultList();
     }
+
+    public List<Order> findAllWithProducts() {
+        return entityManager.createNamedQuery("getAllOrdersWithProducts", Order.class).getResultList();
+    }
+
 
 }
