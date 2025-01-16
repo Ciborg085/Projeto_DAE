@@ -1,9 +1,15 @@
+import { defineNuxtConfig } from 'nuxt/config'
+
 export default defineNuxtConfig({
-    compatibilityDate: '2024-04-03',
-    devtools: { enabled: true },
-    runtimeConfig: {
-        public: {
-            API_URL: process.env.API_URL || 'http://localhost:8080/academics/api'
-        }
-    }
+  modules: [
+      '@pinia/nuxt'
+  ],
+
+  runtimeConfig: {
+      public: {
+          API_URL: process.env.API_URL || 'http://localhost:8080/academics/api'
+      }
+  },
+
+  compatibilityDate: '2025-01-14'
 })
