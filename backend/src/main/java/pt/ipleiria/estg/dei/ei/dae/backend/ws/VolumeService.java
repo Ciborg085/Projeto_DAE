@@ -11,11 +11,13 @@ import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.SensorBean;
 import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.VolumeBean;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.IllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // TODO
 @Path("loja/volumes")
@@ -38,15 +40,46 @@ public class VolumeService {
     // TODO
     @Path("/")
     @GET
-    public List<VolumeDTO> getAllVolumes() {
-        return new ArrayList<>();
+    public Response getAllVolumes() {
+        List<Volume> volumes = volumeBean.findAllComplete();
+
+        List<VolumeGetDTO> volumeGetDTOS = volumes.stream().map( volume -> {
+            List<SensorDTO> sensorDTOS = SensorDTO.from(volume.getSensors());
+
+            return new VolumeGetDTO(
+                    volume.getId(),
+                    volume.getOrder().getId(),
+                    sensorDTOS,
+                    ProductSummaryDTO.from(volume.getProduct()),
+                    volume.getQuantity(),
+                    volume.getVolume_status()
+            );
+        }).collect(Collectors.toList());
+
+        return Response.ok(volumeGetDTOS).build();
     }
 
-    // TODO
+    @Path("/{volume_id}")
+    @GET
+    public Response getVolumeById(@PathParam("volume_id") long volume_id) throws MyEntityNotFoundException {
+        Volume volume = volumeBean.findComplete(volume_id);
+
+        VolumeGetDTO volumeGetDTO = new VolumeGetDTO(
+                volume.getId(),
+                volume.getOrder().getId(),
+                SensorDTO.from(volume.getSensors()),
+                ProductSummaryDTO.from(volume.getProduct()),
+                volume.getQuantity(),
+                volume.getVolume_status()
+        );
+
+        return Response.ok(volumeGetDTO).build();
+    }
+
     @Path("/")
     @POST
     public Response createVolume(VolumeCreatePostDTO volumeCreatePostDTO) throws
-            MyEntityExistsException, MyEntityNotFoundException
+            MyEntityExistsException, MyEntityNotFoundException, IllegalArgumentException
     {
         if (volumeCreatePostDTO.getOrder_id() == 0 && volumeCreatePostDTO.getOrder() == null) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -120,15 +153,38 @@ public class VolumeService {
         Volume volume = volumeBean.find(volumeCreatePostDTO.getVolume_id());
 
         for (SensorForVolumeDTO sensorForVolumeDTO : volumeCreatePostDTO.getSensors()) {
-            sensorBean.create(
-                    sensorForVolumeDTO.getId(),
-                    volume.getId(),
-                    sensorForVolumeDTO.getType()
-            );
+            try {
+                sensorBean.create(
+                        sensorForVolumeDTO.getId(),
+                        volume.getId(),
+                        sensorForVolumeDTO.getType()
+                );
+            } catch (IllegalArgumentException ie) {
+                throw new IllegalArgumentException("Sensor " +sensorForVolumeDTO.getId() +" has unknown type");
+            }
         }
 
-        return Response.status(Response.Status.CREATED)
-                .build();
+        return Response.ok("Volume "+volume.getId()+" created.").build();
+    }
+
+    @Path("/{volume_id}")
+    @PATCH
+    public Response updateVolume(@PathParam("volume_id") long id, VolumeUpdateStatusDTO volumeUpdateStatusDTO) throws MyEntityNotFoundException, IllegalArgumentException {
+        volumeBean.updateStatus(id, volumeUpdateStatusDTO.getStatus());
+
+        Volume volume = volumeBean.findComplete(id);
+
+        VolumeGetDTO volumeGetDTO = new VolumeGetDTO(
+                volume.getId(),
+                volume.getOrder().getId(),
+                SensorDTO.from(volume.getSensors()),
+                ProductSummaryDTO.from(volume.getProduct()),
+                volume.getQuantity(),
+                volume.getVolume_status()
+        );
+
+
+        return  Response.ok(volumeGetDTO).build();
     }
 
 }

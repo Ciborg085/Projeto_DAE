@@ -1,15 +1,25 @@
 {
 	"info": {
-		"_postman_id": "1aa38a69-ec2e-4be3-bd30-07a73922af4b",
+		"_postman_id": "4f9d61d4-1439-492c-b793-8dcd5d37c831",
 		"name": "Projeto DAE",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "7619455",
-		"_collection_link": "https://speeding-eclipse-796108.postman.co/workspace/f14ebcb9-a16a-40c7-bb6d-f6793f99188c/collection/7619455-1aa38a69-ec2e-4be3-bd30-07a73922af4b?action=share&source=collection_link&creator=7619455"
+		"_collection_link": "https://speeding-eclipse-796108.postman.co/workspace/New-Team-Workspace~f14ebcb9-a16a-40c7-bb6d-f6793f99188c/collection/7619455-4f9d61d4-1439-492c-b793-8dcd5d37c831?action=share&source=collection_link&creator=7619455"
 	},
 	"item": [
 		{
 			"name": "Get All Products",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "10|NncKgr0ZSlf55DJ8CxCSt4qOhLCSvAToIxCLGBS36f3371aa",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -23,6 +33,28 @@
 						"academics",
 						"api",
 						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get 1 product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/academics/api/products/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"academics",
+						"api",
+						"products",
+						"1"
 					]
 				}
 			},
@@ -50,12 +82,12 @@
 			"response": []
 		},
 		{
-			"name": "Get a product",
+			"name": "Get 1 Sensor",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/academics/api/products/1",
+					"raw": "http://localhost:8080/academics/api/sensors",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -64,7 +96,116 @@
 					"path": [
 						"academics",
 						"api",
-						"products",
+						"sensors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Orders",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Get 1 order",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Volumes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/academics/api/loja/volumes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"academics",
+						"api",
+						"loja",
+						"volumes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get 1 Volume",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Update order status",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": \"created\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/academics/api/loja/encomendas/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"academics",
+						"api",
+						"loja",
+						"encomendas",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update volume status",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": \"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/academics/api/loja/volumes/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"academics",
+						"api",
+						"loja",
+						"volumes",
 						"1"
 					]
 				}
@@ -109,7 +250,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"volume_id\":1,\n    \"order\": {\n        \"order_id\":2,\n        \"client_username\":\"client2\",\n        \"products\": [\n            {\n                \"id\": 74,\n                \"name\":\"Bananas\",\n                \"brand\":\"Republica das Bananas\",\n                \"price\":2.2,\n                \"category\":\"Fruta\",\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            },\n            {\n                \"id\": 75,\n                \"name\":\"Maças\",\n                \"brand\":\"Republica das Maças\",\n                \"price\":2.3,\n                \"category\":\"Fruta\",\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            }\n        ],\n        \"destination\":\"tua mãe cental\"\n    },\n    \"product_id\":74,\n    \"quantity\":2,\n    \"sensors\": [\n        {\n            \"id\":74,\n            \"type\":\"TemperatureSensor\"\n        }\n    ]\n}",
+					"raw": "{\n    \"volume_id\":1,\n    \"order\": {\n        \"order_id\":2,\n        \"client_username\":\"client2\",\n        \"products\": [\n            {\n                \"id\": 74,\n                \"name\":\"Bananas\",\n                \"brand\":\"Republica das Bananas\",\n                \"price\":2.2,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            },\n            {\n                \"id\": 75,\n                \"name\":\"Maças\",\n                \"brand\":\"Republica das Maças\",\n                \"price\":2.3,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            }\n        ],\n        \"destination\":\"tua mãe cental\"\n    },\n    \"product_id\":74,\n    \"quantity\":2,\n    \"sensors\": [\n        {\n            \"id\":74,\n            \"type\":\"temperatureSensor\"\n        }\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -141,7 +282,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"volume_id\":2,\n    \"order_id\":2,\n    \"product_id\":75,\n    \"quantity\":2,\n    \"sensors\": [\n        {\n            \"id\":75,\n            \"type\":\"TemperatureSensor\"\n        }\n    ]\n}",
+					"raw": "{\n    \"volume_id\":2,\n    \"order_id\":2,\n    \"product_id\":75,\n    \"quantity\":2,\n    \"sensors\": [\n        {\n            \"id\":75,\n            \"type\":\"geolocationSensor\"\n        }\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -192,6 +333,116 @@
 						"api",
 						"sensors",
 						"74"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "📥 Register (Novo Utilizador)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"joaosilva\",\n    \"password\": \"123456\",\n    \"name\": \"João Silva\",\n    \"email\": \"joao.silva@email.com\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/academics/api/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"academics",
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "🔐 Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"joaosilva\",\n    \"password\": \"123456\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/academics/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"academics",
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "👤 Perfil do Utilizador",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/academics/api/auth/profile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"academics",
+						"api",
+						"auth",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "📦 Get All Products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/academics/api/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"academics",
+						"api",
+						"products"
 					]
 				}
 			},

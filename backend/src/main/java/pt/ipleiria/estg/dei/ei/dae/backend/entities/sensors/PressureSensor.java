@@ -1,9 +1,11 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
 
 @Entity
+@DiscriminatorValue("PRESSURE")
 public class PressureSensor extends Sensor {
     private Double pressure;
 

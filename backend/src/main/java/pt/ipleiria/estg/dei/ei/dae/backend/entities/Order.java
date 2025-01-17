@@ -11,15 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@NamedQueries(
+@NamedQueries({
         @NamedQuery(
                 name = "getAllOrders",
                 query = "SELECT o FROM Order o ORDER BY o.id"
+        ),
+        @NamedQuery(
+                name = "getAllOrdersWithProducts",
+                query = "SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.products ORDER BY o.id"
         )
-)
-@Table(
-        name="orders"
-)
+})
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -32,7 +34,7 @@ public class Order {
     @NotBlank
     private String destination;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "order")
     private List<Product> products;
 
     @Enumerated(EnumType.STRING)

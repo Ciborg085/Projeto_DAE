@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.entities.enums;
 
-// TODO use this, make them = to strings
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.IllegalArgumentException;
+
 public enum SensorType {
     GEOLOCATION("geolocationSensor"),
     TEMPERATURE("temperatureSensor"),
@@ -15,5 +16,15 @@ public enum SensorType {
 
     public String getType() {
         return type;
+    }
+
+
+    public static SensorType fromString(String type) throws IllegalArgumentException {
+        for (SensorType sensorType :  SensorType.values()) {
+            if (sensorType.type.equals(type)) {
+                return sensorType;
+            }
+        }
+        throw new IllegalArgumentException("Unknown type: " + type);
     }
 }

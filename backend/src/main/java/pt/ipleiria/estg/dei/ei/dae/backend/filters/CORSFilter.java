@@ -11,9 +11,24 @@ public class CORSFilter implements ContainerResponseFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        responseContext.getHeaders().add("Access-Control-Allow-Origin", "*"); // Permite todas as origens
+        // Permitir origem do frontend
+        responseContext.getHeaders().add("Access-Control-Allow-Origin", "http://localhost:3000");
+
+        // Permitir cabeçalhos personalizados
         responseContext.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
+
+        // Permitir métodos HTTP
         responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
-        responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true"); // Permite autenticação
+
+        // Permitir credenciais (cookies, tokens)
+        responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
+
+        // Cache do preflight (opcional)
+        responseContext.getHeaders().add("Access-Control-Max-Age", "1209600");
+
+        // Responde imediatamente às requisições OPTIONS com status 200
+        if ("OPTIONS".equalsIgnoreCase(requestContext.getMethod())) {
+            responseContext.setStatus(200);
+        }
     }
 }
