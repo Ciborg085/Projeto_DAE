@@ -1,9 +1,11 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
 
 @Entity
+@DiscriminatorValue("TEMPERATURE")
 public class TemperatureSensor extends Sensor{
     private Double temperature;
 
