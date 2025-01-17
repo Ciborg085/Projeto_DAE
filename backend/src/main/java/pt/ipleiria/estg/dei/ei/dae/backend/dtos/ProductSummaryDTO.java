@@ -12,17 +12,17 @@ public class ProductSummaryDTO implements Serializable {
     private String brand;
 
     private String category;
-    private int quantity;
+    private int quantityOrdered;
 
     public ProductSummaryDTO() {
     }
 
-    public ProductSummaryDTO(long id,String name, String brand, String category, int quantity) {
+    public ProductSummaryDTO(long id,String name, String brand, String category, int quantityOrdered) {
         this.id = id;
         this.name = name;
         this.brand = brand;
         this.category = category;
-        this.quantity = quantity;
+        this.quantityOrdered = quantityOrdered;
     }
 
     public long getId() {
@@ -57,12 +57,12 @@ public class ProductSummaryDTO implements Serializable {
         this.category = category;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getQuantityOrdered() {
+        return quantityOrdered;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setQuantityOrdered(int quantityOrdered) {
+        this.quantityOrdered = quantityOrdered;
     }
 
     public static ProductSummaryDTO from(Product product) {
