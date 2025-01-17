@@ -21,9 +21,7 @@ import java.util.List;
                 query = "SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.products ORDER BY o.id"
         )
 })
-@Table(
-        name="orders"
-)
+@Table(name = "orders")
 public class Order {
 
     @Id
