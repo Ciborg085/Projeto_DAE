@@ -11,6 +11,7 @@ import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.OrderStatus;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.IllegalArgumentException;
 
 import java.util.List;
 
@@ -62,5 +63,18 @@ public class OrderBean {
         return entityManager.createNamedQuery("getAllOrdersWithProducts", Order.class).getResultList();
     }
 
+    public void updateStatus(long id, String status) throws MyEntityNotFoundException, IllegalArgumentException {
+       Order order = this.find(id);
+
+       OrderStatus orderStatus = OrderStatus.fromString(status);
+       System.out.println("getorder_status():  \'"+order.getOrder_status()+"\'; orderStatus:\'"+orderStatus+"\'");
+
+       if (order.getOrder_status() == orderStatus) {
+           throw new IllegalArgumentException("Already " + status);
+       }
+
+       order.setOrder_status(orderStatus);
+       entityManager.merge(order);
+    }
 
 }

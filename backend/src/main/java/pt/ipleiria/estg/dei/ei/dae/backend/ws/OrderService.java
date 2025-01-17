@@ -108,4 +108,13 @@ public class OrderService {
         return Response.status(Response.Status.OK)
                 .build();
     }
+
+    @PATCH
+    @Path("/{order_id}")
+    public Response updateStatus(@PathParam("order_id") long order_id, OrderUpdateStatusDTO orderUpdateStatusDTO) throws MyEntityNotFoundException, IllegalArgumentException {
+        orderBean.updateStatus(order_id,orderUpdateStatusDTO.getStatus());
+        Order order =orderBean.find(order_id);
+        OrderWithoutProductsDTO orderDTO =  OrderWithoutProductsDTO.from(order);
+        return Response.ok(orderDTO).build();
+    }
 }
