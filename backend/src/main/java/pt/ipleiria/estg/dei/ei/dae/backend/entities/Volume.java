@@ -12,7 +12,21 @@ import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 
+/*
+* Possivel solução para fazer fetch
+* https://jakarta.ee/learn/docs/jakartaee-tutorial/current/persist/persistence-entitygraphs/persistence-entitygraphs.html
+* */
 @Entity
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllVolumes",
+                query = "SELECT DISTINCT v FROM Volume v ORDER BY v.id"
+        ),
+        @NamedQuery(
+                name = "getAllVolumeComplete",
+                query = "SELECT DISTINCT v FROM Volume v LEFT JOIN FETCH v.product LEFT JOIN FETCH v.sensors ORDER BY v.id"
+        )
+})
 @Table(name = "volume")
 public class Volume {
 

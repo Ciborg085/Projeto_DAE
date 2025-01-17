@@ -5,9 +5,12 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Product;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.VolumeStatus;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.IllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
 
@@ -48,12 +51,36 @@ public class VolumeBean {
         entityManager.persist(volume);
     }
 
-    //TODO
-    public void update() {
+    //TODO do something when delivered
+    public void updateStatus(long id, String status) throws MyEntityNotFoundException, IllegalArgumentException {
+        Volume volume = this.find(id);
+
+        VolumeStatus volumeStatus = VolumeStatus.fromString(status);
+
+        if (volume.getVolume_status() == volumeStatus) {
+             throw new IllegalArgumentException("Already "+ volumeStatus);
+        }
+
+        volume.setVolume_status(volumeStatus);
+        entityManager.merge(volume);
     }
+
 
     public List<Volume> findAll() {
        return new ArrayList<>();
+    }
+
+    // TODO use hibernate.initialize instead of fetch
+    // TODO need to check if this ^^^ is even better then just fetch
+    public List<Volume> findAllComplete() {
+        return entityManager.createNamedQuery("getAllVolumeComplete", Volume.class).getResultList();
+    }
+
+    public Volume findComplete(long id) throws MyEntityNotFoundException {
+        Volume volume = this.find(id);
+        Hibernate.initialize(volume.getProduct());
+        Hibernate.initialize(volume.getSensors());
+        return volume;
     }
 
     public Volume find(long id)
