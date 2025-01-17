@@ -7,7 +7,9 @@ import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.SensorType;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors.*;
+import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.IllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
 
@@ -23,36 +25,37 @@ public class SensorBean {
     @EJB
     private VolumeBean volumeBean;
 
-    public void create(long id, long volume_id, String type) throws MyEntityNotFoundException, MyEntityExistsException {
+    public void create(long id, long volume_id, String type) throws MyEntityNotFoundException, MyEntityExistsException, IllegalArgumentException {
         if (exists(id)) {
             throw new MyEntityExistsException("Sensor "+id+" already exists.");
         }
 
         Volume volume = volumeBean.find(volume_id);
+        SensorType sensorType = SensorType.fromString(type);
 
-        switch (type) {
-            case "GeoLocationSensor":
+        switch (sensorType) {
+            case GEOLOCATION:
                 GeoLocationSensor geoLocationSensor = new GeoLocationSensor(id,volume);
                 entityManager.persist(geoLocationSensor);
                 volume.addSensor(geoLocationSensor);
                 break;
-            case  "PressureSensor":
+            case PRESSURE:
                 PressureSensor pressureSensor = new PressureSensor(id, volume);
                 entityManager.persist(pressureSensor);
                 volume.addSensor(pressureSensor);
                 break;
-            case "TemperatureSensor":
+            case TEMPERATURE:
                 TemperatureSensor temperatureSensor = new TemperatureSensor(id, volume);
                 entityManager.persist(temperatureSensor);
                 volume.addSensor(temperatureSensor);
                 break;
-            case "MultiSensor":
+            case MULTI:
                 MultiSensor multiSensor = new MultiSensor(id, volume);
                 entityManager.persist(multiSensor);
                 volume.addSensor(multiSensor);
                 break;
             default:
-                System.out.println(type);
+                System.out.println(sensorType);
                 throw new RuntimeException("Invalid sensor type");
         }
     }
