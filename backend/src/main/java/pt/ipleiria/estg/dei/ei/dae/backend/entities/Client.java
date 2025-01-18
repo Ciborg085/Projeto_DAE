@@ -14,7 +14,7 @@ import java.util.List;
                 query="SELECT c FROM Client c ORDER BY c.name"
         )
 })
-@DiscriminatorValue("Administrator")
+@DiscriminatorValue("Client")
 public class Client extends User{
 
     @OneToMany(mappedBy = "client")
