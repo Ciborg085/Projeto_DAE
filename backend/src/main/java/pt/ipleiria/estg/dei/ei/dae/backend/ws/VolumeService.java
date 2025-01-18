@@ -120,13 +120,6 @@ public class VolumeService {
 
         Order order = null;
         if (volumeCreatePostDTO.getOrder() != null) {
-            /*
-            - Verificar se a encomenda já existe
-                - Se sim, erro
-                - Se não, criar a encomenda
-             */
-            // create order
-
             OrderForVolumeDTO orderDTO = volumeCreatePostDTO.getOrder();
 
             if (orderBean.exists(orderDTO.getOrder_id())) {
