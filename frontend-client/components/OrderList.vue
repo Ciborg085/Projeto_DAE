@@ -40,33 +40,102 @@
         >
           <td colspan="5">
             <div>
-              <strong>Volume #{{ volume.id }}</strong>
-              <p>Estado: {{ volume.volume_status }}</p>
-              <p>Quantidade: {{ volume.quantity }}</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Volume id</th>
+                            <th>Estado</th>
+                            <th>Quantidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ volume.id }}</td>
+                            <td>{{ volume.volume_status }}</td>
+                            <td>{{ volume.quantity }}</td>
+                            <td>
+                                <button v-if="authStore.role=='Administrator'" @click="advanceVolume(volume)">Avançar o estado</button>
+                                <button @click="abortVolume(volume)">Cancelar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
               <!-- Mostra dados do produto do volume (se existir) -->
               <div v-if="volume.product">
-                <h4>Produto do Volume</h4>
-                <p>ID: {{ volume.product.id }}</p>
-                <p>Nome: {{ volume.product.name }}</p>
-                <p>Marca: {{ volume.product.brand }}</p>
-                <p>Categoria: {{ volume.product.category }}</p>
+                <h3>Produto do Volume</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Marca</th>
+                            <th>Categoria</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ volume.product.id }}</td>
+                            <td>{{ volume.product.name }}</td>
+                            <td>{{ volume.product.brand }}</td>
+                            <td>{{ volume.product.category }}</td>
+                        </tr>
+                    </tbody>
+                </table>
                 <!-- etc... -->
               </div>
 
               <!-- Mostra sensores do volume (se existirem) -->
               <div>
                 <h4>Sensores</h4>
-                <div v-if="!volume.sensors || !volume.sensors.length">
+                <div v-if="!volume.sensor || !volume.sensor.length">
                   (Sem sensores ou não carregados)
                 </div>
                 <ul v-else>
                   <li
-                      v-for="sensor in volume.sensors"
+                      v-for="sensor in volume.sensor"
                       :key="sensor.id"
                   >
-                    Sensor #{{ sensor.id }} - Tipo: {{ sensor.sensorType }}
-                    <!-- podes exibir outras props do sensor... -->
+                  <strong>ID:</strong> {{ sensor.id }} |
+                  <strong>Tipo:</strong> {{ sensor.type }}
+
+                  <!-- Exibe propriedades de acordo com sensor.type -->
+                  <template v-if="sensor.type === 'temperatureSensor'">
+                      <br />
+                      <strong>Temperatura:</strong> {{ sensor.properties.temperature }} °C
+                  </template>
+
+                  <template v-else-if="sensor.type === 'pressureSensor'">
+                      <br />
+                      <strong>Pressão:</strong> {{ sensor.properties.pressure }} hPa
+                  </template>
+
+                  <template v-else-if="sensor.type === 'multiSensor'">
+                      <br />
+                      <strong>Temperatura:</strong> {{ sensor.properties.temperature }} °C
+                      <br />
+                      <strong>Pressão:</strong> {{ sensor.properties.pressure }} hPa
+                      <br />
+                      <strong>Latitude:</strong> {{ sensor.properties.latitude }}
+                      <br />
+                      <strong>Longitude:</strong> {{ sensor.properties.longitude }}
+                  </template>
+
+                  <template v-else-if="sensor.type === 'geolocationSensor'">
+                      <br />
+                      <strong>Latitude:</strong> {{ sensor.properties.latitude }}
+                      <br />
+                      <strong>Longitude:</strong> {{ sensor.properties.longitude }}
+                  </template>
+
+                  <!-- Se houver outro tipo não previsto -->
+                  <template v-else>
+                      <br />
+                      <em>Tipo de sensor não reconhecido.</em>
+                  </template>
+                  <!-- podes exibir outras props do sensor... -->
                   </li>
                 </ul>
               </div>
@@ -78,16 +147,16 @@
         <tr
             v-if="productsOpen[order.id]"
             class="products-row"
-        >
-          <td colspan="5">
-            <h4>Produtos da Encomenda {{ order.id }}</h4>
-            <div v-if="!productsMap[order.id]?.length">
-              (Sem produtos / ou a carregar...)
-            </div>
-            <ul v-else>
-              <li
-                  v-for="prod in productsMap[order.id]"
-                  :key="prod.id"
+            >
+            <td colspan="5">
+                <h4>Produtos da Encomenda {{ order.id }}</h4>
+                <div v-if="!productsMap[order.id]?.length">
+                    (Sem produtos / ou a carregar...)
+                </div>
+                <ul v-else>
+                    <li
+                        v-for="prod in productsMap[order.id]"
+                        :key="prod.id"
               >
                 {{ prod.name }} - {{ prod.brand }} ({{ prod.category }})
               </li>
@@ -224,6 +293,112 @@ async function toggleProducts(order: any) {
 
   productsOpen.value[order.id] = true;
 }
+
+const advanceVolume = async (volume: any) => {
+    let updateData = {
+        "status": ""
+    };
+    
+    switch(volume.volume_status) {
+        case 'SENT':
+            updateData.status = 'delivered';
+            break;
+        case 'ABORTED':
+            alert('Volume already aborted');
+            return;
+        case 'DELIVERED':
+            alert('Volume already delivered');
+            return;
+        default:
+            alert(`Volume #${volume.id} with invalid status`);
+            return;
+    }
+
+    try {
+        const response = await fetch(`${config.public.API_URL}/loja/volumes/${volume.id}`,
+        {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authStore.token}`,
+            },
+            body: JSON.stringify(updateData),
+        });
+        
+        if (response.status != 200) {
+            alert(response.body);
+        }
+        refreshVolumes(volume.order_id);
+
+
+    } catch (err) {
+        console.log(err);
+        alert(err);
+    }
+}
+
+const abortVolume = async (volume: any) => {
+    let updateData = {
+        "status": "aborted"
+    };
+
+    if(volume.volume_status == 'DELIVERED') {
+        alert("Already delived");
+        return;
+    }
+
+    if(volume.volume_status == 'ABORTED') {
+        alert("Already aborted");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${config.public.API_URL}/loja/volumes/${volume.id}`,
+        {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authStore.token}`,
+            },
+            body: JSON.stringify(updateData),
+        });
+        
+        if (response.status != 200) {
+            alert(response.body);
+        }
+        refreshVolumes(volume.order_id);
+
+
+    } catch (err) {
+        console.log(err);
+        alert(err);
+    }
+}
+const refreshVolumes = async (orderId: number) => {
+  try {
+    const response = await fetch(`${BASE_URL}/${orderId}/volumes`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    });
+
+    if (!response.ok && response.status !== 204) {
+      throw new Error('Failed to refresh volumes');
+    }
+
+    if (response.status === 204) {
+      volumesMap.value[orderId] = [];
+    } else {
+      const data = await response.json();
+      volumesMap.value[orderId] = data.volumes || [];
+    }
+  } catch (err) {
+    console.error('Error refreshing volumes:', err);
+    alert('Error refreshing volume data');
+  }
+};
+
 </script>
 
 <style scoped>

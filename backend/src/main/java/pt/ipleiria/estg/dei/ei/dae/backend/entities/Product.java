@@ -10,6 +10,10 @@ import jakarta.validation.constraints.NotNull;
         @NamedQuery(
                 name = "getAllProducts",
                 query = "select p from Product p ORDER BY p.id ASC"
+        ),
+        @NamedQuery(
+            name = "getAllProductsWhereUsername",
+            query = "select p from Product p WHERE p.order.client.username = :client_username ORDER BY p.id ASC"
         )
 })
 public class Product {

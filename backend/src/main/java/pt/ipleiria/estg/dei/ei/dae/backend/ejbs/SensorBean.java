@@ -71,6 +71,12 @@ public class SensorBean {
         return entityManager.createNamedQuery("getAllSensors",Sensor.class).getResultList();
     }
 
+    public List<Sensor> findAll(String username) throws MyEntityNotFoundException {
+        return entityManager.createNamedQuery("getAllSensorsWhereUsername",Sensor.class)
+                .setParameter("client_username",username)
+                .getResultList();
+    }
+
     public boolean exists(long id) {
         Query query = entityManager.createQuery(
                "SELECT COUNT(s.id) FROM Sensor s WHERE s.id = :id",
@@ -89,28 +95,70 @@ public class SensorBean {
         entityManager.lock(sensor, LockModeType.OPTIMISTIC);
 
         if (sensor instanceof GeoLocationSensor) {
-            if (properties.containsKey("latitude") && properties.containsKey("longitude")) {
-                ((GeoLocationSensor) sensor).setLatitude((Double) properties.get("latitude"));
-                ((GeoLocationSensor) sensor).setLongitude((Double) properties.get("longitude"));
+            if (properties.containsKey("latitude")) {
+                if (properties.get("latitude") instanceof Double) {
+                    ((GeoLocationSensor) sensor).setLatitude((Double) properties.get("latitude"));
+
+                } else if (properties.get("latitude") instanceof Integer) {
+                    ((GeoLocationSensor) sensor).setLatitude((Double) ((Integer) properties.get("latitude")).doubleValue());
+                }
+            }
+            if (properties.containsKey("longitude")) {
+                if (properties.get("longitude") instanceof Double) {
+                    ((GeoLocationSensor) sensor).setLongitude((Double) properties.get("longitude"));
+
+                } else if (properties.get("longitude") instanceof Integer) {
+                    ((GeoLocationSensor) sensor).setLongitude((Double) ((Integer) properties.get("longitude")).doubleValue());
+                }
             }
         } else if (sensor instanceof PressureSensor) {
-            if (properties.containsKey("pressure")) {
+            if (properties.get("pressure") instanceof Double) {
                 ((PressureSensor) sensor).setPressure((Double) properties.get("pressure"));
+
+            } else if (properties.get("pressure") instanceof Integer) {
+                ((PressureSensor) sensor).setPressure((Double) ((Integer) properties.get("pressure")).doubleValue());
             }
         } else if (sensor instanceof TemperatureSensor) {
             if (properties.containsKey("temperature")) {
-                ((TemperatureSensor) sensor).setTemperature((Double) properties.get("temperature"));
+                if (properties.get("temperature") instanceof Double) {
+                    ((TemperatureSensor) sensor).setTemperature((Double) properties.get("temperature"));
+
+                } else if (properties.get("temperature") instanceof Integer) {
+                    ((TemperatureSensor) sensor).setTemperature((Double) ((Integer) properties.get("temperature")).doubleValue());
+                }
             }
         } else if (sensor instanceof MultiSensor) {
-            if (properties.containsKey("latitude") && properties.containsKey("longitude")) {
-                ((MultiSensor) sensor).setLatitude((Double) properties.get("latitude"));
-                ((MultiSensor) sensor).setLongitude((Double) properties.get("longitude"));
+            if (properties.containsKey("latitude")) {
+                if (properties.get("latitude") instanceof Double) {
+                    ((MultiSensor) sensor).setLatitude((Double) properties.get("latitude"));
+
+                } else if (properties.get("latitude") instanceof Integer) {
+                    ((MultiSensor) sensor).setLatitude((Double) ((Integer) properties.get("latitude")).doubleValue());
+                }
+            }
+            if (properties.containsKey("longitude")) {
+                if (properties.get("longitude") instanceof Double) {
+                    ((MultiSensor) sensor).setLatitude((Double) properties.get("longitude"));
+
+                } else if (properties.get("longitude") instanceof Integer) {
+                    ((MultiSensor) sensor).setLatitude((Double) ((Integer) properties.get("longitude")).doubleValue());
+                }
             }
             if (properties.containsKey("pressure")) {
-                ((MultiSensor) sensor).setPressure((Double) properties.get("pressure"));
+                if (properties.get("pressure") instanceof Double) {
+                    ((MultiSensor) sensor).setLatitude((Double) properties.get("pressure"));
+
+                } else if (properties.get("pressure") instanceof Integer) {
+                    ((MultiSensor) sensor).setLatitude((Double) ((Integer) properties.get("pressure")).doubleValue());
+                }
             }
             if (properties.containsKey("temperature")) {
-                ((MultiSensor) sensor).setTemperature((Double) properties.get("temperature"));
+                if (properties.get("temperature") instanceof Double) {
+                    ((MultiSensor) sensor).setLatitude((Double) properties.get("temperature"));
+
+                } else if (properties.get("temperature") instanceof Integer) {
+                    ((MultiSensor) sensor).setLatitude((Double) ((Integer) properties.get("temperature")).doubleValue());
+                }
             }
         } else {
             throw new RuntimeException("Sensor "+sensor.getId()+" is of a invalid type");

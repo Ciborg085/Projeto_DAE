@@ -120,13 +120,6 @@ public class VolumeService {
 
         Order order = null;
         if (volumeCreatePostDTO.getOrder() != null) {
-            /*
-            - Verificar se a encomenda já existe
-                - Se sim, erro
-                - Se não, criar a encomenda
-             */
-            // create order
-
             OrderForVolumeDTO orderDTO = volumeCreatePostDTO.getOrder();
 
             if (orderBean.exists(orderDTO.getOrder_id())) {
@@ -167,6 +160,11 @@ public class VolumeService {
                 + ", Order_id=" + order.getId()
                 + ", Product_id=" + volumeCreatePostDTO.getProduct_id()
                 + ", Quantity=" + volumeCreatePostDTO.getQuantity());
+
+        // Se a quantidade do produto no volume for maior do que a quantidade encomendada desse produto, dá erro
+        if (volumeCreatePostDTO.getQuantity() > productBean.find(volumeCreatePostDTO.getProduct_id()).getQuantityOrdered()) {
+            throw new IllegalArgumentException("Quantity in volume is greater then quantity ordered");
+        }
 
         volumeBean.create(
                 volumeCreatePostDTO.getVolume_id(),

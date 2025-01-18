@@ -17,6 +17,7 @@
                     <th @click.right="clearSort()" @click="sortTable('maxQuantityPerVolume')">Quantidade Máxima por Volume<span>{{ sortIcon('maxQuantityPerVolume') }}</span></th>
                     <th @click.right="clearSort()" @click="sortTable('price')">Preço (€) <span>{{ sortIcon('price') }}</span></th>
                     <th @click.right="clearSort()" @click="sortTable('typeOfPackage')">Tipo de Embalagem <span>{{ sortIcon('typeOfPackage') }}</span></th>
+                    <th @click.right="clearSort()" @click="sortTable('order_id')">Id da Encomenda <span>{{ sortIcon('order_id') }}</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -28,6 +29,7 @@
                     <td>{{ product.maxQuantityPerVolume }}</td>
                     <td>€{{ product.price.toFixed(2) }}</td>
                     <td>{{ product.typeOfPackage }}</td>
+                    <td>{{ product.order_id }}</td>
                 </tr>
             </tbody>
         </table>

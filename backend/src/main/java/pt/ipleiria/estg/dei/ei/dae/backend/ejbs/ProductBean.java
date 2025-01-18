@@ -58,6 +58,12 @@ public class ProductBean {
         return entityManager.createNamedQuery("getAllProducts", Product.class).getResultList();
     }
 
+    public List<Product> findAll(String username) {
+        return entityManager.createNamedQuery("getAllProductsWhereUsername", Product.class)
+                .setParameter("client_username",username)
+                .getResultList();
+    }
+
     public void update(
             long id,
             String name,

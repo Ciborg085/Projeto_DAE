@@ -11,6 +11,10 @@ import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.SensorType;
         @NamedQuery(
                 name = "getAllSensors",
                 query = "SELECT s FROM Sensor s ORDER BY s.id"
+        ),
+        @NamedQuery(
+                name = "getAllSensorsWhereUsername",
+                query = "SELECT s FROM Sensor s WHERE s.volume.order.client.username = :client_username ORDER BY s.id"
         )
 })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

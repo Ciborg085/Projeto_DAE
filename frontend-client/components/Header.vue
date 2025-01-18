@@ -18,6 +18,8 @@
                 <NuxtLink to="/login" class="login-btn">Iniciar Sessão</NuxtLink>
             </div>
             <div v-else class="user-actions">
+                <span>Username: <strong>{{authStore.username}}</strong></span> |
+                <span>Role: <strong>{{authStore.role}}</strong></span> |
                 <NuxtLink to="/perfil" class="login-btn">Perfil</NuxtLink>
             </div>
         </div>
