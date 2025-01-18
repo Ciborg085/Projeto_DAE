@@ -17,7 +17,7 @@
       </tr>
       </thead>
       <tbody>
-      <!-- Aqui usamos <template> v-for em vez de <tr> v-for -->
+      <!-- Bloco para cada encomenda -->
       <template v-for="order in orders" :key="order.id">
         <!-- Linha principal da encomenda -->
         <tr class="order-row">
@@ -31,7 +31,7 @@
           </td>
         </tr>
 
-        <!-- Linha(s) extra se volumesOpen[order.id] estiver true -->
+        <!-- Quando 'volumesOpen[order.id]' é true, mostramos cada volume -->
         <tr
             v-if="volumesOpen[order.id]"
             v-for="volume in (volumesMap[order.id] || [])"
@@ -39,14 +39,42 @@
             class="volume-row"
         >
           <td colspan="5">
-            <strong>Volume #{{ volume.id }}</strong>
-            <div>Estado: {{ volume.volume_status }}</div>
-            <div>Quantidade: {{ volume.quantity }}</div>
-            <!-- etc. -->
+            <div>
+              <strong>Volume #{{ volume.id }}</strong>
+              <p>Estado: {{ volume.volume_status }}</p>
+              <p>Quantidade: {{ volume.quantity }}</p>
+
+              <!-- Mostra dados do produto do volume (se existir) -->
+              <div v-if="volume.product">
+                <h4>Produto do Volume</h4>
+                <p>ID: {{ volume.product.id }}</p>
+                <p>Nome: {{ volume.product.name }}</p>
+                <p>Marca: {{ volume.product.brand }}</p>
+                <p>Categoria: {{ volume.product.category }}</p>
+                <!-- etc... -->
+              </div>
+
+              <!-- Mostra sensores do volume (se existirem) -->
+              <div>
+                <h4>Sensores</h4>
+                <div v-if="!volume.sensors || !volume.sensors.length">
+                  (Sem sensores ou não carregados)
+                </div>
+                <ul v-else>
+                  <li
+                      v-for="sensor in volume.sensors"
+                      :key="sensor.id"
+                  >
+                    Sensor #{{ sensor.id }} - Tipo: {{ sensor.sensorType }}
+                    <!-- podes exibir outras props do sensor... -->
+                  </li>
+                </ul>
+              </div>
+            </div>
           </td>
         </tr>
 
-        <!-- Linha(s) extra se productsOpen[order.id] estiver true -->
+        <!-- Se 'productsOpen[order.id]' for true, mostra os produtos GERAIS da encomenda -->
         <tr
             v-if="productsOpen[order.id]"
             class="products-row"
@@ -87,15 +115,13 @@ const volumesOpen = ref<Record<number, boolean>>({});
 // Armazena volumes de cada encomenda
 const volumesMap = ref<Record<number, any[]>>({});
 
-// Controla se a secção de produtos está aberta para cada encomenda
+// Controla se a secção de produtos da encomenda está aberta
 const productsOpen = ref<Record<number, boolean>>({});
 // Armazena produtos de cada encomenda
 const productsMap = ref<Record<number, any[]>>({});
 
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
-
-// URL base (podes ajustar conforme precisas)
 const BASE_URL = `${config.public.API_URL}/loja/encomendas`;
 
 onMounted(async () => {
@@ -104,7 +130,7 @@ onMounted(async () => {
 });
 
 /**
- * Busca a lista de encomendas do cliente
+ * Busca a lista de encomendas
  */
 async function fetchOrders() {
   loading.value = true;
@@ -120,7 +146,7 @@ async function fetchOrders() {
       throw new Error('Falha ao buscar encomendas');
     }
     const data = await response.json();
-    orders.value = data; // array de encomendas
+    orders.value = data;
   } catch (err) {
     console.error(err);
     error.value = true;
@@ -133,13 +159,13 @@ async function fetchOrders() {
  * Expandir/colapsar volumes de uma encomenda
  */
 async function toggleVolumes(order: any) {
-  // Se já está aberto, fecha
   if (volumesOpen.value[order.id]) {
+    // Já está aberto -> fecha
     volumesOpen.value[order.id] = false;
     return;
   }
 
-  // Caso contrário, buscamos volumes só se ainda não os temos em cache
+  // Se ainda não carregámos volumes desta encomenda, buscamos
   if (!volumesMap.value[order.id]) {
     try {
       const response = await fetch(`${BASE_URL}/${order.id}/volumes`, {
@@ -148,16 +174,13 @@ async function toggleVolumes(order: any) {
           Authorization: `Bearer ${authStore.token}`,
         },
       });
-      // Se não houver volumes ou der erro, lida com isso
       if (!response.ok && response.status !== 204) {
         throw new Error('Falha ao buscar volumes');
       }
-      // Se vier 204 (NO_CONTENT), volumes = []
       if (response.status === 204) {
         volumesMap.value[order.id] = [];
       } else {
         const data = await response.json();
-        // A resposta do back-end é um objeto com { volumes: [...] }
         volumesMap.value[order.id] = data.volumes ?? [];
       }
     } catch (err) {
@@ -165,20 +188,21 @@ async function toggleVolumes(order: any) {
       volumesMap.value[order.id] = [];
     }
   }
+
   volumesOpen.value[order.id] = true;
 }
 
 /**
- * Expandir/colapsar produtos de uma encomenda
+ * Expandir/colapsar produtos GERAIS da encomenda
  */
 async function toggleProducts(order: any) {
-  // Se já estiver aberto, fecha
   if (productsOpen.value[order.id]) {
+    // Já está aberto -> fecha
     productsOpen.value[order.id] = false;
     return;
   }
 
-  // Só busca se ainda não foi carregado
+  // Se ainda não carregámos os produtos
   if (!productsMap.value[order.id]) {
     try {
       const response = await fetch(`${BASE_URL}/${order.id}`, {
@@ -191,13 +215,6 @@ async function toggleProducts(order: any) {
         throw new Error('Falha ao buscar produtos da encomenda');
       }
       const data = await response.json();
-      // data deve vir no formato:
-      // {
-      //   id: ...,
-      //   clientUsername: ...,
-      //   orderStatus: ...,
-      //   products: [ { id, name, ... } ]
-      // }
       productsMap.value[order.id] = data.products || [];
     } catch (err) {
       console.error(err);
@@ -244,5 +261,9 @@ tbody tr:hover {
 .products-row {
   background-color: #fafafa;
   border-top: 1px solid #eee;
+}
+
+.volume-row div {
+  margin-bottom: 0.5rem;
 }
 </style>

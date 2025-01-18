@@ -2,64 +2,132 @@
   <div class="sensor-list">
     <h2>Lista de Sensores</h2>
 
-    <!-- Exibição de erro -->
+    <!-- Mensagens de erro -->
     <div v-if="error" class="error">{{ error }}</div>
 
     <!-- Loader enquanto busca os dados -->
-    <div v-if="loading" class="loading">Carregando sensores...</div>
+    <div v-if="loading" class="loading">A carregar sensores...</div>
 
-    <!-- Lista de sensores -->
+    <!-- Lista de sensores (quando tudo OK) -->
     <ul v-else>
       <li v-for="sensor in sensors" :key="sensor.id" class="sensor-item">
         <strong>ID:</strong> {{ sensor.id }} |
-        <strong>Tipo:</strong> {{ sensor.type }} |
-        <strong>Temperatura:</strong> {{ sensor.properties.temperature }} °C
+        <strong>Tipo:</strong> {{ sensor.type }}
+
+        <!-- Exibe propriedades de acordo com sensor.type -->
+        <template v-if="sensor.type === 'TEMPERATURE'">
+          <br />
+          <strong>Temperatura:</strong> {{ sensor.temperature }} °C
+        </template>
+
+        <template v-else-if="sensor.type === 'PRESSURE'">
+          <br />
+          <strong>Pressão:</strong> {{ sensor.pressure }} hPa
+        </template>
+
+        <template v-else-if="sensor.type === 'MULTI'">
+          <br />
+          <strong>Temperatura:</strong> {{ sensor.temperature }} °C
+          <br />
+          <strong>Pressão:</strong> {{ sensor.pressure }} hPa
+          <br />
+          <strong>Latitude:</strong> {{ sensor.latitude }}
+          <br />
+          <strong>Longitude:</strong> {{ sensor.longitude }}
+        </template>
+
+        <template v-else-if="sensor.type === 'GEOLOCATION'">
+          <br />
+          <strong>Latitude:</strong> {{ sensor.latitude }}
+          <br />
+          <strong>Longitude:</strong> {{ sensor.longitude }}
+        </template>
+
+        <!-- Se houver outro tipo não previsto -->
+        <template v-else>
+          <br />
+          <em>Tipo de sensor não reconhecido.</em>
+        </template>
       </li>
     </ul>
   </div>
 </template>
 
-<script>
-import axios from "axios";
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 import { useRuntimeConfig } from '#app';
+import { useAuthStore } from '@/stores/auth';
 
-export default {
-  data() {
-    return {
-      sensors: [],
-      loading: true,
-      error: null,
-    };
-  },
-  methods: {
-    async fetchSensors() {
-      try {
-        this.loading = true;
-        this.error = null;
+const sensors = ref<any[]>([]);
+const loading = ref(true);
+const error = ref<string|null>(null);
 
-        const config = useRuntimeConfig();
-        const apiUrl = config.public.API_URL;
+const config = useRuntimeConfig();
+const API_URL = config.public.API_URL;
 
-        const response = await axios.get(`${apiUrl}/sensors`);
-        let sensorsData = Array.isArray(response.data) ? response.data : [];
+// Store com o token
+const authStore = useAuthStore();
 
-        this.sensors = sensorsData.slice(0, 10);
+// Função auxiliar que converte "temperatureSensor" -> "TEMPERATURE", etc.
+function normalizeSensorType(rawType: string): string {
+  const lower = rawType.toLowerCase();
+  if (lower.includes('temperature')) return 'TEMPERATURE';
+  if (lower.includes('pressure'))    return 'PRESSURE';
+  if (lower.includes('geolocation')) return 'GEOLOCATION';
+  if (lower.includes('multi'))       return 'MULTI';
+  return 'UNKNOWN';
+}
 
-        if (this.sensors.length === 0) {
-          this.error = "Nenhum sensor encontrado.";
-        }
+// Função que busca a lista de sensores
+async function fetchSensors() {
+  try {
+    loading.value = true;
+    error.value = null;
 
-      } catch (err) {
-        this.error = "Erro ao carregar os sensores!";
-      } finally {
-        this.loading = false;
-      }
+    const response = await axios.get(`${API_URL}/sensors`, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    });
+
+    let data = Array.isArray(response.data) ? response.data : [];
+
+    data = data.map(sensor => {
+      const type = normalizeSensorType(sensor.type || 'UNKNOWN');
+      // Se não houver sensor.properties, garante que fica um objeto vazio
+      const props = sensor.properties || {};
+
+      return {
+        ...sensor,
+        // substitui "type" por algo padronizado (TEMPERATURE, PRESSURE, etc.)
+        type,
+
+        // Copiamos as propriedades
+        temperature: props.temperature ?? null,
+        pressure: props.pressure ?? null,
+        latitude: props.latitude ?? null,
+        longitude: props.longitude ?? null,
+      };
+    });
+
+    sensors.value = data.slice(0, 10);
+
+    if (sensors.value.length === 0) {
+      error.value = "Nenhum sensor encontrado.";
     }
-  },
-  mounted() {
-    this.fetchSensors();
-  },
-};
+  } catch (err) {
+    console.error(err);
+    error.value = "Erro ao carregar os sensores!";
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  authStore.initAuth();
+  fetchSensors();
+});
 </script>
 
 <style scoped>
@@ -69,13 +137,8 @@ export default {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   max-width: 800px;
-  margin: 0 auto; /* Centraliza horizontalmente */
-  text-align: center; /* Centraliza o texto */
-}
-
-h2 {
-  margin-bottom: 1rem;
-  color: #333;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .sensor-item {
