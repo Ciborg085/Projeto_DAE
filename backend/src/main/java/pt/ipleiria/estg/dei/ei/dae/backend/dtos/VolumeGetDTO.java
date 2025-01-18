@@ -75,17 +75,17 @@ public class VolumeGetDTO {
         this.volume_status = volume_status;
     }
 
-    // public static VolumeGetDTO from (Volume volume){
-    //     return new VolumeGetDTO(
-    //             //volume.getId(),
-    //             //volume.getOrder(),
-    //             //volume.getSensor(),
-    //             //volume.getQuantity(),
-    //             //volume.getVolume_status()
-    //     );
-    // }
+     //public static VolumeGetDTO from (Volume volume){
+     //    return new VolumeGetDTO(
+     //            volume.getId(),
+     //            volume.getOrder(),
+     //            volume.getSensor(),
+     //            volume.getQuantity(),
+     //            volume.getVolume_status()
+     //    );
+     //}
 
-    // public static List<VolumeGetDTO> from(List<Volume> volumes) {
-    //     return volumes.stream().map(VolumeGetDTO::from).collect(Collectors.toList());
-    // }
+     //public static List<VolumeGetDTO> from(List<Volume> volumes) {
+     //    return volumes.stream().map(VolumeGetDTO::from).collect(Collectors.toList());
+     //}
 }

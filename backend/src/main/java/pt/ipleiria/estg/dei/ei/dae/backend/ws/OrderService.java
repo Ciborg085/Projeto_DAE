@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.Response;
 import pt.ipleiria.estg.dei.ei.dae.backend.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.OrderBean;
 import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.ProductBean;
+import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.VolumeBean;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.IllegalArgumentException;
@@ -29,6 +30,9 @@ public class OrderService {
 
     @EJB
     private ProductBean productBean;
+
+    @EJB
+    private VolumeBean volumeBean;
 
     @GET
     @Path("/")
@@ -73,13 +77,36 @@ public class OrderService {
     // TODO
     @GET
     @Path("/{order_id}/volumes")
-    public void getOrderWithVolumes(@PathParam("order_id") long order_id) {
+    public Response getOrderVolumes(@PathParam("order_id") long order_id) throws MyEntityNotFoundException, IllegalArgumentException {
+        List<Volume> volumes = orderBean.findVolumesFromOrder(order_id);
+        Order order = orderBean.find(order_id);
+        if (volumes == null ||  volumes.isEmpty()) {
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
+        OrderVolumesGetDTO orderVolumesGetDTO = new OrderVolumesGetDTO();
 
+        orderVolumesGetDTO.setOrder_id(order_id);
+        orderVolumesGetDTO.setClient_name(order.getClient().getName());
+
+        List<VolumeGetDTO> volumeGetDTOS = volumes.stream().map(volume -> {
+            return new VolumeGetDTO(
+                    volume.getId(),
+                    volume.getOrder().getId(),
+                    SensorDTO.from(volume.getSensors()),
+                    ProductSummaryDTO.from(volume.getProduct()),
+                    volume.getQuantity(),
+                    volume.getVolume_status()
+            );
+        }).collect(Collectors.toList());
+
+        orderVolumesGetDTO.setVolumes(volumeGetDTOS);
+
+        return Response.ok(orderVolumesGetDTO).build();
     }
     // TODO
     @GET
     @Path("/{order_id}/products")
-    public void getOrderWithProducts(@PathParam("order_id") long order_id) {
+    public void getOrderProducts(@PathParam("order_id") long order_id) {
 
     }
 
