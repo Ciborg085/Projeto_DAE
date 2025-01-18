@@ -1,9 +1,13 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.io.Serializable;
 
 public class LoginDTO implements Serializable {
+    @NotBlank(message = "Username can't be blank")
     private String username;
+    @NotBlank(message = "Password can't be blank")
     private String password;
 
     public LoginDTO() {}

@@ -1,9 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
+
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -16,6 +14,7 @@ import java.util.List;
                 query="SELECT c FROM Client c ORDER BY c.name"
         )
 })
+@DiscriminatorColumn(name = "Client")
 public class Client extends User{
 
     @OneToMany(mappedBy = "client")
