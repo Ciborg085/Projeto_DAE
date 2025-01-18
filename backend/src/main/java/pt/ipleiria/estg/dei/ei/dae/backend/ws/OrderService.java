@@ -74,7 +74,6 @@ public class OrderService {
                 .build();
     }
 
-    // TODO
     @GET
     @Path("/{order_id}/volumes")
     public Response getOrderVolumes(@PathParam("order_id") long order_id) throws MyEntityNotFoundException, IllegalArgumentException {
@@ -103,6 +102,7 @@ public class OrderService {
 
         return Response.ok(orderVolumesGetDTO).build();
     }
+
     // TODO
     @GET
     @Path("/{order_id}/products")
