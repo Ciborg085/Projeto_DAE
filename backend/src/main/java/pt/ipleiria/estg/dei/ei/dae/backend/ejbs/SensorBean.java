@@ -71,6 +71,12 @@ public class SensorBean {
         return entityManager.createNamedQuery("getAllSensors",Sensor.class).getResultList();
     }
 
+    public List<Sensor> findAll(String username) throws MyEntityNotFoundException {
+        return entityManager.createNamedQuery("getAllSensorsWhereUsername",Sensor.class)
+                .setParameter("client_username",username)
+                .getResultList();
+    }
+
     public boolean exists(long id) {
         Query query = entityManager.createQuery(
                "SELECT COUNT(s.id) FROM Sensor s WHERE s.id = :id",
