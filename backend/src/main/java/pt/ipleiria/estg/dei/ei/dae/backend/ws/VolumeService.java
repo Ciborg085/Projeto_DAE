@@ -161,6 +161,11 @@ public class VolumeService {
                 + ", Product_id=" + volumeCreatePostDTO.getProduct_id()
                 + ", Quantity=" + volumeCreatePostDTO.getQuantity());
 
+        // Se a quantidade do produto no volume for maior do que a quantidade encomendada desse produto, dá erro
+        if (volumeCreatePostDTO.getQuantity() > productBean.find(volumeCreatePostDTO.getProduct_id()).getQuantityOrdered()) {
+            throw new IllegalArgumentException("Quantity in volume is greater then quantity ordered");
+        }
+
         volumeBean.create(
                 volumeCreatePostDTO.getVolume_id(),
                 order.getId(),
