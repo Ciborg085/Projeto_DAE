@@ -79,6 +79,12 @@ public class VolumeBean {
         return entityManager.createNamedQuery("getAllVolumeComplete", Volume.class).getResultList();
     }
 
+    public List<Volume> findAllComplete(String username) {
+        return entityManager.createNamedQuery("getAllVolumeCompleteWhereUsername", Volume.class)
+                .setParameter("client_username",username)
+                .getResultList();
+    }
+
     public Volume findComplete(long id) throws MyEntityNotFoundException {
         Volume volume = this.find(id);
         Hibernate.initialize(volume.getProduct());

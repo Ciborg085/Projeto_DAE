@@ -2,14 +2,14 @@ package pt.ipleiria.estg.dei.ei.dae.backend.ws;
 
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import pt.ipleiria.estg.dei.ei.dae.backend.dtos.*;
-import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.OrderBean;
-import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.ProductBean;
-import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.SensorBean;
-import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.VolumeBean;
+import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.*;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.User;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.IllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
@@ -39,11 +39,30 @@ public class VolumeService {
     @EJB
     private SensorBean sensorBean;
 
+    @EJB
+    private UserBean userBean;
+
+    @Context
+    private SecurityContext securityContext;
+
     // TODO
     @Path("/")
     @GET
-    public Response getAllVolumes() {
-        List<Volume> volumes = volumeBean.findAllComplete();
+    public Response getAllVolumes() throws MyEntityNotFoundException {
+        var principal = securityContext.getUserPrincipal();
+        User user = userBean.find(principal.getName());
+
+        List<Volume> volumes = null;
+
+        if ( user.getRole().equals("Administrator")) {
+            volumes = volumeBean.findAllComplete();
+        } else if ( user.getRole().equals("Client")) {
+            volumes = volumeBean.findAllComplete(user.getUsername());
+        }
+
+        if (volumes == null) {
+            throw new MyEntityNotFoundException("Role not found");
+        }
 
         List<VolumeGetDTO> volumeGetDTOS = volumes.stream().map( volume -> {
             List<SensorDTO> sensorDTOS = SensorDTO.from(volume.getSensors());
