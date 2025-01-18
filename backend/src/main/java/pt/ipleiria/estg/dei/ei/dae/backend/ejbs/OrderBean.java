@@ -8,12 +8,15 @@ import jakarta.persistence.Query;
 import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.enums.OrderStatus;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.IllegalArgumentException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Stateless
 public class OrderBean {
@@ -22,6 +25,8 @@ public class OrderBean {
 
     @EJB
     private ClientBean clientBean;
+    @EJB
+    private VolumeBean volumeBean;
 
     public void create(long id,String client_username, String destination)
             throws MyEntityNotFoundException, MyEntityExistsException {
@@ -31,6 +36,7 @@ public class OrderBean {
         Client client = clientBean.find(client_username);
         Order order = new Order(id,client,destination, OrderStatus.CREATED);
         entityManager.persist(order);
+        client.addOrder(order);
     }
 
     public Order find(long id) throws MyEntityNotFoundException {
@@ -61,6 +67,21 @@ public class OrderBean {
 
     public List<Order> findAllWithProducts() {
         return entityManager.createNamedQuery("getAllOrdersWithProducts", Order.class).getResultList();
+    }
+
+    public List<Volume> findVolumesFromOrder(long id) throws MyEntityNotFoundException {
+        Order order = this.find(id);
+        // do volumeComplete
+
+        //Just don't do this, human centipede type shit
+        Hibernate.initialize(order.getClient());
+        List<Volume> volumes = new ArrayList<>();
+
+        for (Volume volume : order.getVolumes()) {
+            volumes.add(volumeBean.findComplete(volume.getId()));
+        }
+
+        return volumes;
     }
 
     public void updateStatus(long id, String status) throws MyEntityNotFoundException, IllegalArgumentException {

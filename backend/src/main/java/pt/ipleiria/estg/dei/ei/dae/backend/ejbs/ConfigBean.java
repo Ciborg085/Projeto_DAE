@@ -53,7 +53,7 @@ public class ConfigBean {
         System.out.println("Creating orders...");
         try {
             System.out.println("Client 1 orders...");
-            orderBean.create(1,"client1","Tua mae");
+            orderBean.create(1,"client1","Rua blablabla");
             productBean.create(1, "Leite Meio Gordo", "Pingo Doce",1.3f, 10,"Lacticínios",6,"Normal",1);
             productBean.create(2, "Cereais Chocolate", "Pingo Doce",2.3f,7,"Mercearia",3,"Normal",1);
         }

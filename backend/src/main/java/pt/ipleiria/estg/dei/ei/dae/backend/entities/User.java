@@ -68,7 +68,7 @@ public class User {
 
     @Transient
     public String getRole() {
-        return this.getClass().getAnnotation(DiscriminatorColumn.class).name();
+        return this.getClass().getAnnotation(DiscriminatorValue.class).value();
     }
 
 }

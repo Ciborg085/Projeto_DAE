@@ -19,7 +19,7 @@ import java.util.List;
         @NamedQuery(
                 name = "getAllOrdersWithProducts",
                 query = "SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.products ORDER BY o.id"
-        )
+        ),
 })
 @Table(name = "orders")
 public class Order {
@@ -37,6 +37,9 @@ public class Order {
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "order")
     private List<Product> products;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    private List<Volume> volumes;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     private OrderStatus order_status = OrderStatus.CREATED;
@@ -48,6 +51,7 @@ public class Order {
     // Required
     public Order() {
         this.products = new ArrayList<Product>();
+        this.volumes = new ArrayList<Volume>();
     }
 
     public Order(long id, Client client, String destination, OrderStatus order_status) {
@@ -56,6 +60,7 @@ public class Order {
         this.destination = destination;
         this.order_status = order_status;
         this.products = new ArrayList<Product>();
+        this.volumes = new ArrayList<Volume>();
     }
 
     // Getters y Setters
@@ -95,6 +100,14 @@ public class Order {
         this.products = products;
     }
 
+    public List<Volume> getVolumes() {
+        return volumes;
+    }
+
+    public void setVolumes(List<Volume> volumes) {
+        this.volumes = volumes;
+    }
+
     public void addProduct(Product product) throws MyEntityExistsException {
         if (this.products.contains(product)) {
             throw new MyEntityExistsException("Product already in the list");
@@ -107,6 +120,20 @@ public class Order {
             throw new MyEntityNotFoundException("Product not in the list");
         }
         this.products.remove(product);
+    }
+
+    public void addVolume(Volume volume) throws MyEntityExistsException {
+        if (this.volumes.contains(volume)) {
+            throw new MyEntityExistsException("Volume already in the list");
+        }
+        this.volumes.add(volume);
+    }
+
+    public void removeVolume(Volume volume) throws MyEntityNotFoundException {
+        if (!this.volumes.contains(volume)) {
+            throw new MyEntityNotFoundException("Volume not in the list");
+        }
+        this.volumes.remove(volume);
     }
 
 

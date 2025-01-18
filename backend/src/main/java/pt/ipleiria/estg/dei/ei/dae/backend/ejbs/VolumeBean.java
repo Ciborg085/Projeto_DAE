@@ -49,6 +49,9 @@ public class VolumeBean {
 
         Volume volume = new Volume(volume_id,order,product,quantity);
         entityManager.persist(volume);
+        order.addVolume(volume);
+        entityManager.merge(order);
+        entityManager.flush();
     }
 
     //TODO do something when delivered
@@ -82,6 +85,8 @@ public class VolumeBean {
         Hibernate.initialize(volume.getSensors());
         return volume;
     }
+
+
 
     public Volume find(long id)
             throws MyEntityNotFoundException {
