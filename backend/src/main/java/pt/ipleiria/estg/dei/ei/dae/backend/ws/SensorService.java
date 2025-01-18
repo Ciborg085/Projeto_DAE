@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ws;
 
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -30,12 +31,14 @@ public class SensorService {
      */
     @GET
     @Path("/")
+    @RolesAllowed({"Administrator","Client"})
     public List<SensorDTO> getSensors() throws MyEntityNotFoundException {
         return SensorDTO.from(sensorBean.findAll());
     }
 
     @PATCH
     @Path("/{sensor_id}")
+    @RolesAllowed("Administrator")
     public Response updateValues(@PathParam("sensor_id") long sensor_id, SensorPatchDTO sensorDTO)
             throws MyEntityNotFoundException {
         sensorBean.updateValues(sensor_id,sensorDTO.getProperties());

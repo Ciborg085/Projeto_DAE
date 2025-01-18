@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ws;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -48,6 +49,7 @@ public class VolumeService {
     // TODO
     @Path("/")
     @GET
+    @RolesAllowed({"Administrator","Client"})
     public Response getAllVolumes() throws MyEntityNotFoundException {
         var principal = securityContext.getUserPrincipal();
         User user = userBean.find(principal.getName());
@@ -82,6 +84,7 @@ public class VolumeService {
 
     @Path("/{volume_id}")
     @GET
+    @RolesAllowed({"Administrator","Client"})
     public Response getVolumeById(@PathParam("volume_id") long volume_id) throws MyEntityNotFoundException {
         Volume volume = volumeBean.findComplete(volume_id);
 
@@ -99,6 +102,7 @@ public class VolumeService {
 
     @Path("/")
     @POST
+    @RolesAllowed("Administrator")
     public Response createVolume(VolumeCreatePostDTO volumeCreatePostDTO) throws
             MyEntityExistsException, MyEntityNotFoundException, IllegalArgumentException
     {
@@ -190,6 +194,7 @@ public class VolumeService {
 
     @Path("/{volume_id}")
     @PATCH
+    @RolesAllowed("Administrator")
     public Response updateVolume(@PathParam("volume_id") long id, VolumeUpdateStatusDTO volumeUpdateStatusDTO) throws MyEntityNotFoundException, IllegalArgumentException {
         volumeBean.updateStatus(id, volumeUpdateStatusDTO.getStatus());
 

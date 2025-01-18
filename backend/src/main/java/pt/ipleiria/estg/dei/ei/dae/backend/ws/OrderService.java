@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ws;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -44,6 +45,7 @@ public class OrderService {
 
     @GET
     @Path("/")
+    @RolesAllowed({"Administrator","Client"})
     public Response getAllOrdersWithProducts() throws MyEntityNotFoundException {
         var principal = securityContext.getUserPrincipal();
         User user = userBean.find(principal.getName());
@@ -79,6 +81,7 @@ public class OrderService {
 
     @GET
     @Path("/{order_id}")
+    @RolesAllowed({"Administrator","Client"})
     public Response getOrderById(@PathParam("order_id") long order_id)
             throws MyEntityNotFoundException {
         Order order = orderBean.findWithProducts(order_id);
@@ -99,6 +102,7 @@ public class OrderService {
 
     @GET
     @Path("/{order_id}/volumes")
+    @RolesAllowed({"Administrator","Client"})
     public Response getOrderVolumes(@PathParam("order_id") long order_id) throws MyEntityNotFoundException, IllegalArgumentException {
         List<Volume> volumes = orderBean.findVolumesFromOrder(order_id);
         Order order = orderBean.find(order_id);
@@ -134,6 +138,7 @@ public class OrderService {
 
     @POST
     @Path("/")
+    @RolesAllowed({"Administrator","Client"})
     public Response createOrder(OrderForVolumeDTO orderDTO)
             throws MyEntityNotFoundException, MyEntityExistsException {
         orderBean.create(
@@ -163,6 +168,7 @@ public class OrderService {
 
     @PATCH
     @Path("/{order_id}")
+    @RolesAllowed("Administrator")
     public Response updateStatus(@PathParam("order_id") long order_id, OrderUpdateStatusDTO orderUpdateStatusDTO) throws MyEntityNotFoundException, IllegalArgumentException {
         orderBean.updateStatus(order_id,orderUpdateStatusDTO.getStatus());
         Order order =orderBean.find(order_id);

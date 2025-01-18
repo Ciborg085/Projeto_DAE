@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ws;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -65,6 +66,7 @@ public class AuthService {
     @Path("/profile")
     @Produces({MediaType.APPLICATION_JSON,MediaType.TEXT_PLAIN})
     @Authenticated
+    @RolesAllowed({"Administrator","Client"})
     public Response getProfile() {
         try {
             var pricipal = securityContext.getUserPrincipal();
