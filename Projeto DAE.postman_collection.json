@@ -183,6 +183,14 @@
 			"response": []
 		},
 		{
+			"name": "Make order",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
 			"name": "Update order status",
 			"request": {
 				"method": "PATCH",
@@ -217,11 +225,21 @@
 		{
 			"name": "Update volume status",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3MzcyMzM3NjcsImV4cCI6MTczNzIzNzM2N30.mhf7KOiMLQl1Q1TeQxiXkM1VskEcc7ROETMamv_OfGE8Ud1FpRRyTeyvqck_Z-M0",
+							"type": "string"
+						}
+					]
+				},
 				"method": "PATCH",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"status\": \"\"\n}",
+					"raw": "{\n    \"status\": \"created\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -280,11 +298,21 @@
 		{
 			"name": "New Volume - With new order",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3MzcyNDM3MzUsImV4cCI6MTczNzMzMDEzNX0.ehd0OKxEUZKn-7B4GMSS4NRMMLBKqjyfMFlK3A4Snx5iFlEPIFumZjPvAR2u-eIx",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"volume_id\":1,\n    \"order\": {\n        \"order_id\":2,\n        \"client_username\":\"client2\",\n        \"products\": [\n            {\n                \"id\": 74,\n                \"name\":\"Bananas\",\n                \"brand\":\"Republica das Bananas\",\n                \"price\":2.2,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            },\n            {\n                \"id\": 75,\n                \"name\":\"Maças\",\n                \"brand\":\"Republica das Maças\",\n                \"price\":2.3,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            }\n        ],\n        \"destination\":\"tua mãe cental\"\n    },\n    \"product_id\":74,\n    \"quantity\":2,\n    \"sensors\": [\n        {\n            \"id\":74,\n            \"type\":\"temperatureSensor\"\n        }\n    ]\n}",
+					"raw": "{\n    \"volume_id\":1,\n    \"order\": {\n        \"order_id\":2,\n        \"client_username\":\"client2\",\n        \"products\": [\n            {\n                \"id\": 74,\n                \"name\":\"Bananas\",\n                \"brand\":\"Republica das Bananas\",\n                \"price\":2.2,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            },\n            {\n                \"id\": 75,\n                \"name\":\"Maças\",\n                \"brand\":\"Republica das Maças\",\n                \"price\":2.3,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            }\n        ],\n        \"destination\":\"rua central\"\n    },\n    \"product_id\":74,\n    \"quantity\":2,\n    \"sensors\": [\n        {\n            \"id\":74,\n            \"type\":\"temperatureSensor\"\n        }\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -315,7 +343,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"volume_id\":3,\n    \"order\": {\n        \"order_id\":4,\n        \"client_username\":\"client1\",\n        \"products\": [\n            {\n                \"id\": 76,\n                \"name\":\"Bananas\",\n                \"brand\":\"Republica das Bananas\",\n                \"price\":2.2,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            },\n            {\n                \"id\": 77,\n                \"name\":\"Maças\",\n                \"brand\":\"Republica das Maças\",\n                \"price\":2.3,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            }\n        ],\n        \"destination\":\"tua mãe cental\"\n    },\n    \"product_id\":76,\n    \"quantity\":2,\n    \"sensors\": [\n        {\n            \"id\":80,\n            \"type\":\"temperatureSensor\"\n        }\n    ]\n}",
+							"raw": "{\n    \"volume_id\":3,\n    \"order\": {\n        \"order_id\":4,\n        \"client_username\":\"client1\",\n        \"products\": [\n            {\n                \"id\": 76,\n                \"name\":\"Bananas\",\n                \"brand\":\"Republica das Bananas\",\n                \"price\":2.2,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            },\n            {\n                \"id\": 77,\n                \"name\":\"Maças\",\n                \"brand\":\"Republica das Maças\",\n                \"price\":2.3,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            }\n        ],\n        \"destination\":\"rua central\"\n    },\n    \"product_id\":76,\n    \"quantity\":2,\n    \"sensors\": [\n        {\n            \"id\":80,\n            \"type\":\"temperatureSensor\"\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -348,6 +376,16 @@
 		{
 			"name": "New Volume - For existing order",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3MzcyMjQzNTQsImV4cCI6MTczNzIyNzk1NH0.iZR-IktOWWJEoBpZnanoWd-yE6NYV5L8Fd8LWusl673MQyCQ1QD8CW58Csj9T1j4",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
