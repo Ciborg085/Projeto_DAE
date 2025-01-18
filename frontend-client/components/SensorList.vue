@@ -15,32 +15,32 @@
         <strong>Tipo:</strong> {{ sensor.type }}
 
         <!-- Exibe propriedades de acordo com sensor.type -->
-        <template v-if="sensor.type === 'TEMPERATURE'">
-          <br />
-          <strong>Temperatura:</strong> {{ sensor.temperature }} °C
+        <template v-if="sensor.type === 'temperatureSensor'">
+            <br />
+            <strong>Temperatura:</strong> {{ sensor.properties.temperature }} °C
         </template>
 
-        <template v-else-if="sensor.type === 'PRESSURE'">
-          <br />
-          <strong>Pressão:</strong> {{ sensor.pressure }} hPa
+        <template v-else-if="sensor.type === 'pressureSensor'">
+            <br />
+            <strong>Pressão:</strong> {{ sensor.properties.pressure }} hPa
         </template>
 
-        <template v-else-if="sensor.type === 'MULTI'">
-          <br />
-          <strong>Temperatura:</strong> {{ sensor.temperature }} °C
-          <br />
-          <strong>Pressão:</strong> {{ sensor.pressure }} hPa
-          <br />
-          <strong>Latitude:</strong> {{ sensor.latitude }}
-          <br />
-          <strong>Longitude:</strong> {{ sensor.longitude }}
+        <template v-else-if="sensor.type === 'multiSensor'">
+            <br />
+            <strong>Temperatura:</strong> {{ sensor.properties.temperature }} °C
+            <br />
+            <strong>Pressão:</strong> {{ sensor.properties.pressure }} hPa
+            <br />
+            <strong>Latitude:</strong> {{ sensor.properties.latitude }}
+            <br />
+            <strong>Longitude:</strong> {{ sensor.properties.longitude }}
         </template>
 
-        <template v-else-if="sensor.type === 'GEOLOCATION'">
-          <br />
-          <strong>Latitude:</strong> {{ sensor.latitude }}
-          <br />
-          <strong>Longitude:</strong> {{ sensor.longitude }}
+        <template v-else-if="sensor.type === 'geolocationSensor'">
+            <br />
+            <strong>Latitude:</strong> {{ sensor.properties.latitude }}
+            <br />
+            <strong>Longitude:</strong> {{ sensor.properties.longitude }}
         </template>
 
         <!-- Se houver outro tipo não previsto -->

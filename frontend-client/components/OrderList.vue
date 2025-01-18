@@ -57,16 +57,52 @@
               <!-- Mostra sensores do volume (se existirem) -->
               <div>
                 <h4>Sensores</h4>
-                <div v-if="!volume.sensors || !volume.sensors.length">
+                <div v-if="!volume.sensor || !volume.sensor.length">
                   (Sem sensores ou não carregados)
                 </div>
                 <ul v-else>
                   <li
-                      v-for="sensor in volume.sensors"
+                      v-for="sensor in volume.sensor"
                       :key="sensor.id"
                   >
-                    Sensor #{{ sensor.id }} - Tipo: {{ sensor.sensorType }}
-                    <!-- podes exibir outras props do sensor... -->
+                  <strong>ID:</strong> {{ sensor.id }} |
+                  <strong>Tipo:</strong> {{ sensor.type }}
+
+                  <!-- Exibe propriedades de acordo com sensor.type -->
+                  <template v-if="sensor.type === 'temperatureSensor'">
+                      <br />
+                      <strong>Temperatura:</strong> {{ sensor.properties.temperature }} °C
+                  </template>
+
+                  <template v-else-if="sensor.type === 'pressureSensor'">
+                      <br />
+                      <strong>Pressão:</strong> {{ sensor.properties.pressure }} hPa
+                  </template>
+
+                  <template v-else-if="sensor.type === 'multiSensor'">
+                      <br />
+                      <strong>Temperatura:</strong> {{ sensor.properties.temperature }} °C
+                      <br />
+                      <strong>Pressão:</strong> {{ sensor.properties.pressure }} hPa
+                      <br />
+                      <strong>Latitude:</strong> {{ sensor.properties.latitude }}
+                      <br />
+                      <strong>Longitude:</strong> {{ sensor.properties.longitude }}
+                  </template>
+
+                  <template v-else-if="sensor.type === 'geolocationSensor'">
+                      <br />
+                      <strong>Latitude:</strong> {{ sensor.properties.latitude }}
+                      <br />
+                      <strong>Longitude:</strong> {{ sensor.properties.longitude }}
+                  </template>
+
+                  <!-- Se houver outro tipo não previsto -->
+                  <template v-else>
+                      <br />
+                      <em>Tipo de sensor não reconhecido.</em>
+                  </template>
+                  <!-- podes exibir outras props do sensor... -->
                   </li>
                 </ul>
               </div>
@@ -78,16 +114,16 @@
         <tr
             v-if="productsOpen[order.id]"
             class="products-row"
-        >
-          <td colspan="5">
-            <h4>Produtos da Encomenda {{ order.id }}</h4>
-            <div v-if="!productsMap[order.id]?.length">
-              (Sem produtos / ou a carregar...)
-            </div>
-            <ul v-else>
-              <li
-                  v-for="prod in productsMap[order.id]"
-                  :key="prod.id"
+            >
+            <td colspan="5">
+                <h4>Produtos da Encomenda {{ order.id }}</h4>
+                <div v-if="!productsMap[order.id]?.length">
+                    (Sem produtos / ou a carregar...)
+                </div>
+                <ul v-else>
+                    <li
+                        v-for="prod in productsMap[order.id]"
+                        :key="prod.id"
               >
                 {{ prod.name }} - {{ prod.brand }} ({{ prod.category }})
               </li>
