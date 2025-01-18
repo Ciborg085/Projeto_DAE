@@ -3,7 +3,7 @@
     <div class="login-card">
       <h2>Iniciar Sessão</h2>
 
-      <p v-if="authStore.errorMessage" class="error-message">{{ authStore.errorMessage }}</p>
+      <p v-if="authStore.error" class="error-message">{{ authStore.error }}</p>
 
       <form @submit.prevent="handleLogin">
         <input v-model="username" type="text" placeholder="Nome de Utilizador" required />
@@ -21,7 +21,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '~/stores/auth';
+import { useAuthStore } from '@/stores/auth';
 
 const username = ref('');
 const password = ref('');

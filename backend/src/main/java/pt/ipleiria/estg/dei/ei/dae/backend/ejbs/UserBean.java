@@ -1,20 +1,26 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ejbs;
 
 import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.User;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.backend.security.Hasher;
 
 @Stateless
 public class UserBean {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Inject
+    private Hasher hasher;
 
     // 🔎 Buscar utilizador pelo username
     public User find(String username) throws MyEntityNotFoundException {
@@ -23,6 +29,21 @@ public class UserBean {
             throw new MyEntityNotFoundException("Utilizador '" + username + "' não encontrado.");
         }
         return user;
+    }
+
+    public User findOrFail(String username) {
+        User user = entityManager.getReference(User.class, username);
+        Hibernate.initialize(user);
+        return user;
+    }
+
+    public boolean canLogin(String username, String password) {
+        try {
+            User user = this.find(username);
+            return user != null && user.getPassword().equals(hasher.hash(password));
+        } catch (MyEntityNotFoundException e) {
+            return false;
+        }
     }
 
     // 🔐 Autenticação de utilizador (login)
@@ -56,7 +77,7 @@ public class UserBean {
             throw new MyEntityExistsException("Utilizador com o username '" + username + "' já existe.");
         }
 
-        Client client = new Client(username, password, name, email);
+        Client client = new Client(username, hasher.hash(password), name, email);
         entityManager.persist(client);
     }
 }

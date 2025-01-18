@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ejbs;
 
 import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
@@ -10,6 +11,7 @@ import pt.ipleiria.estg.dei.ei.dae.backend.entities.Client;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.backend.security.Hasher;
 
 import java.util.List;
 
@@ -18,6 +20,9 @@ public class ClientBean {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Inject
+    private Hasher hasher;
 
     public void create(String username, String password, String name, String email)
             throws MyConstraintViolationException, MyEntityExistsException, MyEntityNotFoundException {
@@ -30,7 +35,7 @@ public class ClientBean {
         }
 
         try {
-            Client client = new Client(username, password, name, email);
+            Client client = new Client(username, hasher.hash(password), name, email);
             entityManager.persist(client);
             entityManager.flush();
         } catch (ConstraintViolationException e) {
@@ -68,7 +73,7 @@ public class ClientBean {
 
         entityManager.lock(client, LockModeType.OPTIMISTIC);
         client.setName(name);
-        client.setPassword(password);
+        client.setPassword(hasher.hash(password));
         client.setEmail(email);
    }
 

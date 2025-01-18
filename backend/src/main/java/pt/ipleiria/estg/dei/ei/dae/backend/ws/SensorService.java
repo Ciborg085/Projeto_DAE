@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ws;
 
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -10,6 +11,7 @@ import pt.ipleiria.estg.dei.ei.dae.backend.dtos.SensorPatchDTO;
 import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.SensorBean;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.sensors.Sensor;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.backend.security.Authenticated;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ import java.util.List;
 @Path("/sensors")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
+@Authenticated
 public class SensorService {
 
     @EJB
@@ -28,12 +31,14 @@ public class SensorService {
      */
     @GET
     @Path("/")
+    @RolesAllowed({"Administrator","Client"})
     public List<SensorDTO> getSensors() throws MyEntityNotFoundException {
         return SensorDTO.from(sensorBean.findAll());
     }
 
     @PATCH
     @Path("/{sensor_id}")
+    @RolesAllowed("Administrator")
     public Response updateValues(@PathParam("sensor_id") long sensor_id, SensorPatchDTO sensorDTO)
             throws MyEntityNotFoundException {
         sensorBean.updateValues(sensor_id,sensorDTO.getProperties());

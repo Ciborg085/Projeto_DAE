@@ -1,19 +1,21 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ws;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import pt.ipleiria.estg.dei.ei.dae.backend.dtos.*;
-import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.OrderBean;
-import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.ProductBean;
-import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.SensorBean;
-import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.VolumeBean;
+import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.*;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.User;
 import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.IllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.backend.security.Authenticated;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @Path("loja/volumes")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
+@Authenticated
 public class VolumeService {
 
     @EJB
@@ -37,11 +40,31 @@ public class VolumeService {
     @EJB
     private SensorBean sensorBean;
 
+    @EJB
+    private UserBean userBean;
+
+    @Context
+    private SecurityContext securityContext;
+
     // TODO
     @Path("/")
     @GET
-    public Response getAllVolumes() {
-        List<Volume> volumes = volumeBean.findAllComplete();
+    @RolesAllowed({"Administrator","Client"})
+    public Response getAllVolumes() throws MyEntityNotFoundException {
+        var principal = securityContext.getUserPrincipal();
+        User user = userBean.find(principal.getName());
+
+        List<Volume> volumes = null;
+
+        if ( user.getRole().equals("Administrator")) {
+            volumes = volumeBean.findAllComplete();
+        } else if ( user.getRole().equals("Client")) {
+            volumes = volumeBean.findAllComplete(user.getUsername());
+        }
+
+        if (volumes == null) {
+            throw new MyEntityNotFoundException("Role not found");
+        }
 
         List<VolumeGetDTO> volumeGetDTOS = volumes.stream().map( volume -> {
             List<SensorDTO> sensorDTOS = SensorDTO.from(volume.getSensors());
@@ -61,6 +84,7 @@ public class VolumeService {
 
     @Path("/{volume_id}")
     @GET
+    @RolesAllowed({"Administrator","Client"})
     public Response getVolumeById(@PathParam("volume_id") long volume_id) throws MyEntityNotFoundException {
         Volume volume = volumeBean.findComplete(volume_id);
 
@@ -78,6 +102,7 @@ public class VolumeService {
 
     @Path("/")
     @POST
+    @RolesAllowed("Administrator")
     public Response createVolume(VolumeCreatePostDTO volumeCreatePostDTO) throws
             MyEntityExistsException, MyEntityNotFoundException, IllegalArgumentException
     {
@@ -169,6 +194,7 @@ public class VolumeService {
 
     @Path("/{volume_id}")
     @PATCH
+    @RolesAllowed("Administrator")
     public Response updateVolume(@PathParam("volume_id") long id, VolumeUpdateStatusDTO volumeUpdateStatusDTO) throws MyEntityNotFoundException, IllegalArgumentException {
         volumeBean.updateStatus(id, volumeUpdateStatusDTO.getStatus());
 

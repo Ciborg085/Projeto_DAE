@@ -49,6 +49,9 @@ public class VolumeBean {
 
         Volume volume = new Volume(volume_id,order,product,quantity);
         entityManager.persist(volume);
+        order.addVolume(volume);
+        entityManager.merge(order);
+        entityManager.flush();
     }
 
     //TODO do something when delivered
@@ -76,12 +79,20 @@ public class VolumeBean {
         return entityManager.createNamedQuery("getAllVolumeComplete", Volume.class).getResultList();
     }
 
+    public List<Volume> findAllComplete(String username) {
+        return entityManager.createNamedQuery("getAllVolumeCompleteWhereUsername", Volume.class)
+                .setParameter("client_username",username)
+                .getResultList();
+    }
+
     public Volume findComplete(long id) throws MyEntityNotFoundException {
         Volume volume = this.find(id);
         Hibernate.initialize(volume.getProduct());
         Hibernate.initialize(volume.getSensors());
         return volume;
     }
+
+
 
     public Volume find(long id)
             throws MyEntityNotFoundException {

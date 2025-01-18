@@ -149,6 +149,40 @@
 			"response": []
 		},
 		{
+			"name": "Get All Volumes From Order 2",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJjbGllbnQxIiwiaWF0IjoxNzM3MTUyMjM2LCJleHAiOjE3MzcxNTU4MzZ9.UbENC1NBSY8-TMiGpLQYF322-EVwCUIQps14SlDoKnpMz_chmMBRL6-nPumYVQy_",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/academics/api/loja/encomendas/1/volumes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"academics",
+						"api",
+						"loja",
+						"encomendas",
+						"1",
+						"volumes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Update order status",
 			"request": {
 				"method": "PATCH",
@@ -273,7 +307,43 @@
 					]
 				}
 			},
-			"response": []
+			"response": [
+				{
+					"name": "volume 3 - client 1",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"volume_id\":3,\n    \"order\": {\n        \"order_id\":4,\n        \"client_username\":\"client1\",\n        \"products\": [\n            {\n                \"id\": 76,\n                \"name\":\"Bananas\",\n                \"brand\":\"Republica das Bananas\",\n                \"price\":2.2,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            },\n            {\n                \"id\": 77,\n                \"name\":\"Maças\",\n                \"brand\":\"Republica das Maças\",\n                \"price\":2.3,\n                \"category\":\"Fruta\",\n                \"quantityOrdered\": 2,\n                \"maxQuantityPerVolume\": 12,\n                \"typeOfPackage\":\"Termico\",\n                \"order_id\":2\n            }\n        ],\n        \"destination\":\"tua mãe cental\"\n    },\n    \"product_id\":76,\n    \"quantity\":2,\n    \"sensors\": [\n        {\n            \"id\":80,\n            \"type\":\"temperatureSensor\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/academics/api/loja/volumes/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"academics",
+								"api",
+								"loja",
+								"volumes",
+								""
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
 		},
 		{
 			"name": "New Volume - For existing order",
@@ -367,7 +437,42 @@
 					]
 				}
 			},
-			"response": []
+			"response": [
+				{
+					"name": "Joao Silva (Cliente)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"joaosilva\",\n    \"password\": \"123456\",\n    \"name\": \"João Silva\",\n    \"email\": \"joao.silva@email.com\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/academics/api/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"academics",
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
 		},
 		{
 			"name": "🔐 Login",
@@ -381,7 +486,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"joaosilva\",\n    \"password\": \"123456\"\n}"
+					"raw": "{\n    \"username\": \"client2\",\n    \"password\": \"123\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/academics/api/auth/login",
@@ -398,7 +503,128 @@
 					]
 				}
 			},
-			"response": []
+			"response": [
+				{
+					"name": "Admin1",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin1\",\n    \"password\": \"123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/academics/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"academics",
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "🔐 Cliente2",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"client2\",\n    \"password\": \"123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/academics/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"academics",
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "🔐 Cliente1",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"client1\",\n    \"password\": \"123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/academics/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"academics",
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
 		},
 		{
 			"name": "👤 Perfil do Utilizador",

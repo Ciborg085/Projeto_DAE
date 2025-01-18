@@ -66,4 +66,9 @@ public class User {
 
     public void setName(String name) { this.name = name; }
 
+    @Transient
+    public String getRole() {
+        return this.getClass().getAnnotation(DiscriminatorValue.class).value();
+    }
+
 }

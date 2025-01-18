@@ -1,19 +1,27 @@
 <template>
   <div class="perfil-container">
-    <h2>Bem-vindo, {{ authStore.user?.username }}</h2>
-    <p>Email: {{ authStore.user?.email }}</p>
+    <h2>Bem-vindo, {{ authStore.username }}</h2>
+    <p>Email: {{ authStore.email }}</p>
+    <p>Role: {{ authStore.role }}</p>
     <button @click="authStore.logout">Sair</button>
   </div>
 </template>
 
 <script setup>
-import { useAuthStore } from '~/stores/auth';
+import { useAuthStore } from '@/stores/auth';
+import { onMounted } from 'vue';
 
 const authStore = useAuthStore();
 
-definePageMeta({
-  middleware: 'auth'
+//definePageMeta({
+//  middleware: 'auth'
+//});
+
+onMounted(() => {
+    authStore.initAuth();
+    authStore.fetchProfile();
 });
+
 </script>
 
 <style scoped>

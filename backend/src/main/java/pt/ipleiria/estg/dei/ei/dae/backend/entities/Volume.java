@@ -25,6 +25,10 @@ import java.util.List;
         @NamedQuery(
                 name = "getAllVolumeComplete",
                 query = "SELECT DISTINCT v FROM Volume v LEFT JOIN FETCH v.product LEFT JOIN FETCH v.sensors ORDER BY v.id"
+        ),
+        @NamedQuery(
+                name = "getAllVolumeCompleteWhereUsername",
+                query = "SELECT DISTINCT v FROM Volume v LEFT JOIN FETCH v.product LEFT JOIN FETCH v.sensors WHERE v.order.client.username = :client_username ORDER BY v.id"
         )
 })
 @Table(name = "volume")
