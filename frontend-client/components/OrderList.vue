@@ -158,7 +158,7 @@
                         v-for="prod in productsMap[order.id]"
                         :key="prod.id"
               >
-                {{ prod.name }} - {{ prod.brand }} ({{ prod.category }})
+              {{prod.id}}: {{ prod.name }} - {{ prod.brand }} ({{ prod.category }} - {{ prod.quantityOrdered }})
               </li>
             </ul>
           </td>
