@@ -1,0 +1,269 @@
+<template>
+  <div class="order-list">
+    <h2>Lista de Encomendas</h2>
+
+    <!-- Mensagens de estado -->
+    <div v-if="loading">A carregar encomendas...</div>
+    <div v-else-if="error">Ocorreu um erro ao carregar as encomendas.</div>
+
+    <table v-else>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Estado</th>
+        <th>Destino</th>
+        <th>Ações</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- Bloco para cada encomenda -->
+      <template v-for="order in orders" :key="order.id">
+        <!-- Linha principal da encomenda -->
+        <tr class="order-row">
+          <td>{{ order.id }}</td>
+          <td>{{ order.clientUsername }}</td>
+          <td>{{ order.orderStatus }}</td>
+          <td>{{ order.destination }}</td>
+          <td>
+            <button @click="toggleVolumes(order)">Ver Volumes</button>
+            <button @click="toggleProducts(order)">Ver Produtos</button>
+          </td>
+        </tr>
+
+        <!-- Quando 'volumesOpen[order.id]' é true, mostramos cada volume -->
+        <tr
+            v-if="volumesOpen[order.id]"
+            v-for="volume in (volumesMap[order.id] || [])"
+            :key="volume.id"
+            class="volume-row"
+        >
+          <td colspan="5">
+            <div>
+              <strong>Volume #{{ volume.id }}</strong>
+              <p>Estado: {{ volume.volume_status }}</p>
+              <p>Quantidade: {{ volume.quantity }}</p>
+
+              <!-- Mostra dados do produto do volume (se existir) -->
+              <div v-if="volume.product">
+                <h4>Produto do Volume</h4>
+                <p>ID: {{ volume.product.id }}</p>
+                <p>Nome: {{ volume.product.name }}</p>
+                <p>Marca: {{ volume.product.brand }}</p>
+                <p>Categoria: {{ volume.product.category }}</p>
+                <!-- etc... -->
+              </div>
+
+              <!-- Mostra sensores do volume (se existirem) -->
+              <div>
+                <h4>Sensores</h4>
+                <div v-if="!volume.sensors || !volume.sensors.length">
+                  (Sem sensores ou não carregados)
+                </div>
+                <ul v-else>
+                  <li
+                      v-for="sensor in volume.sensors"
+                      :key="sensor.id"
+                  >
+                    Sensor #{{ sensor.id }} - Tipo: {{ sensor.sensorType }}
+                    <!-- podes exibir outras props do sensor... -->
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Se 'productsOpen[order.id]' for true, mostra os produtos GERAIS da encomenda -->
+        <tr
+            v-if="productsOpen[order.id]"
+            class="products-row"
+        >
+          <td colspan="5">
+            <h4>Produtos da Encomenda {{ order.id }}</h4>
+            <div v-if="!productsMap[order.id]?.length">
+              (Sem produtos / ou a carregar...)
+            </div>
+            <ul v-else>
+              <li
+                  v-for="prod in productsMap[order.id]"
+                  :key="prod.id"
+              >
+                {{ prod.name }} - {{ prod.brand }} ({{ prod.category }})
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </template>
+      </tbody>
+    </table>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRuntimeConfig } from '#app';
+import { useAuthStore } from '@/stores/auth';
+
+// Lista de encomendas
+const orders = ref<any[]>([]);
+const loading = ref(true);
+const error = ref(false);
+
+// Controla se a secção de volumes está aberta para cada encomenda
+const volumesOpen = ref<Record<number, boolean>>({});
+// Armazena volumes de cada encomenda
+const volumesMap = ref<Record<number, any[]>>({});
+
+// Controla se a secção de produtos da encomenda está aberta
+const productsOpen = ref<Record<number, boolean>>({});
+// Armazena produtos de cada encomenda
+const productsMap = ref<Record<number, any[]>>({});
+
+const config = useRuntimeConfig();
+const authStore = useAuthStore();
+const BASE_URL = `${config.public.API_URL}/loja/encomendas`;
+
+onMounted(async () => {
+  authStore.initAuth();
+  await fetchOrders();
+});
+
+/**
+ * Busca a lista de encomendas
+ */
+async function fetchOrders() {
+  loading.value = true;
+  error.value = false;
+  try {
+    const response = await fetch(`${BASE_URL}/`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Falha ao buscar encomendas');
+    }
+    const data = await response.json();
+    orders.value = data;
+  } catch (err) {
+    console.error(err);
+    error.value = true;
+  } finally {
+    loading.value = false;
+  }
+}
+
+/**
+ * Expandir/colapsar volumes de uma encomenda
+ */
+async function toggleVolumes(order: any) {
+  if (volumesOpen.value[order.id]) {
+    // Já está aberto -> fecha
+    volumesOpen.value[order.id] = false;
+    return;
+  }
+
+  // Se ainda não carregámos volumes desta encomenda, buscamos
+  if (!volumesMap.value[order.id]) {
+    try {
+      const response = await fetch(`${BASE_URL}/${order.id}/volumes`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      });
+      if (!response.ok && response.status !== 204) {
+        throw new Error('Falha ao buscar volumes');
+      }
+      if (response.status === 204) {
+        volumesMap.value[order.id] = [];
+      } else {
+        const data = await response.json();
+        volumesMap.value[order.id] = data.volumes ?? [];
+      }
+    } catch (err) {
+      console.error(err);
+      volumesMap.value[order.id] = [];
+    }
+  }
+
+  volumesOpen.value[order.id] = true;
+}
+
+/**
+ * Expandir/colapsar produtos GERAIS da encomenda
+ */
+async function toggleProducts(order: any) {
+  if (productsOpen.value[order.id]) {
+    // Já está aberto -> fecha
+    productsOpen.value[order.id] = false;
+    return;
+  }
+
+  // Se ainda não carregámos os produtos
+  if (!productsMap.value[order.id]) {
+    try {
+      const response = await fetch(`${BASE_URL}/${order.id}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Falha ao buscar produtos da encomenda');
+      }
+      const data = await response.json();
+      productsMap.value[order.id] = data.products || [];
+    } catch (err) {
+      console.error(err);
+      productsMap.value[order.id] = [];
+    }
+  }
+
+  productsOpen.value[order.id] = true;
+}
+</script>
+
+<style scoped>
+.order-list {
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+thead th {
+  background-color: #f5f5f7;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+tbody td {
+  padding: 0.5rem;
+  border-top: 1px solid #ddd;
+}
+
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.volume-row,
+.products-row {
+  background-color: #fafafa;
+  border-top: 1px solid #eee;
+}
+
+.volume-row div {
+  margin-bottom: 0.5rem;
+}
+</style>
