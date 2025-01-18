@@ -42,7 +42,7 @@
                 </div>
                 <div>
                     <label>Tipo de package: </label>
-                    <input type="text" v-model="product.typeOfPackage" min="1" required />
+                    <input type="text" v-model="product.typeOfPackage" required />
                 </div>
         <button type="button" @click="removeProduct(index)">Remover</button>
       </div>
