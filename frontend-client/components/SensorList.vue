@@ -48,6 +48,14 @@
           <br />
           <em>Tipo de sensor não reconhecido.</em>
         </template>
+        <div v-if="authStore.role == 'Administrator'" class="buttons">
+            <div v-for="(value,key) in sensor.properties" :key="key" class="property-item">
+                <strong>{{ key }}:</strong>
+                <input type="text" v-model="sensor.properties[key]" :placeholder="`Enter ${key}`" />
+                <button @click="updateSensor(sensor.id,key,sensor.properties[key])">Update Sensor</button>
+                <button @click="updateSensorRandom(sensor.id,key)">Randomize Sensor</button>
+            </div>
+        </div>
       </li>
     </ul>
   </div>
@@ -68,19 +76,19 @@ const API_URL = config.public.API_URL;
 
 // Store com o token
 const authStore = useAuthStore();
-
+                 
 // Função auxiliar que converte "temperatureSensor" -> "TEMPERATURE", etc.
 function normalizeSensorType(rawType: string): string {
-  const lower = rawType.toLowerCase();
+  const  lower = rawType.toLowerCase();
   if (lower.includes('temperature')) return 'TEMPERATURE';
   if (lower.includes('pressure'))    return 'PRESSURE';
-  if (lower.includes('geolocation')) return 'GEOLOCATION';
+  if ( lower.includes('geolocation')) return 'GEOLOCATION';
   if (lower.includes('multi'))       return 'MULTI';
   return 'UNKNOWN';
 }
 
 // Função que busca a lista de sensores
-async function fetchSensors() {
+async  function fetchSensors() {
   try {
     loading.value = true;
     error.value = null;
@@ -94,7 +102,8 @@ async function fetchSensors() {
     let data = Array.isArray(response.data) ? response.data : [];
 
     data = data.map(sensor => {
-      const type = normalizeSensorType(sensor.type || 'UNKNOWN');
+      //const type = normalizeSensorType(sensor.type || 'UNKNOWN');
+      const type = sensor.type || 'UNKNOWN'
       // Se não houver sensor.properties, garante que fica um objeto vazio
       const props = sensor.properties || {};
 
@@ -103,7 +112,7 @@ async function fetchSensors() {
         // substitui "type" por algo padronizado (TEMPERATURE, PRESSURE, etc.)
         type,
 
-        // Copiamos as propriedades
+         // Copiamos as propriedades
         temperature: props.temperature ?? null,
         pressure: props.pressure ?? null,
         latitude: props.latitude ?? null,
@@ -123,6 +132,27 @@ async function fetchSensors() {
     loading.value = false;
   }
 }
+
+const updateSensor = async (sensorId: string, property: number, value: any) => {
+    try {
+        const updateData = { properties: { [property]:Number(value)} };
+        await axios.patch(`${API_URL}/sensors/${sensorId}`, updateData, {
+              headers: {
+                Authorization: `Bearer ${authStore.token}`,
+              },
+            });
+    } catch (err) {
+        console.log(err);
+        alert(`Erro ao atualizar o sensor ${sensorId}\n ${err}`);
+    }
+    fetchSensors();
+};
+
+const updateSensorRandom = async (sensorId: string, property: number) => {
+    let randomValue = (Math.random() * 50 - 10).toFixed(1);
+    await updateSensor(sensorId,property,randomValue)
+}
+
 
 onMounted(() => {
   authStore.initAuth();
@@ -157,5 +187,14 @@ onMounted(() => {
 
 .loading {
   color: #555;
+}
+
+.buttons {
+   align-items: right;
+}
+
+.buttons input {
+    width:10%;
+    margin-right: 5px;
 }
 </style>
