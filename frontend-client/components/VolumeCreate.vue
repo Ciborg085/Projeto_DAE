@@ -1,6 +1,6 @@
 <template>
     <div class="new-volume">
-        <h2>Criar Nova Encomenda</h2>
+        <h2>Criar Novo Volume</h2>
         <form @submit.prevent="createVolume">
             <div>
                 <div>
