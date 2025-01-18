@@ -3,10 +3,15 @@ package pt.ipleiria.estg.dei.ei.dae.backend.ws;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import pt.ipleiria.estg.dei.ei.dae.backend.dtos.ProductFullDTO;
 import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.ProductBean;
+import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.UserBean;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.Product;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.User;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.backend.security.Authenticated;
@@ -21,6 +26,12 @@ public class ProductService {
     @EJB
     private ProductBean productBean;
 
+    @EJB
+    private UserBean userBean;
+
+    @Context
+    private SecurityContext securityContext;
+
 //    @GET
 //    @Path("/")
 //    public List<ProductDTO> getProducts(){
@@ -29,8 +40,25 @@ public class ProductService {
     @GET
     @Path("/")
     @RolesAllowed({"Administrator","Client"})
-    public List<ProductFullDTO> getProducts(){
-            return ProductFullDTO.from(productBean.findAll());
+    public Response getProducts() throws MyEntityNotFoundException{
+        var principal = securityContext.getUserPrincipal();
+        User user = userBean.find(principal.getName());
+        List<Product> products = null;
+
+        if (user.getRole().equals("Administrator")) {
+            products = productBean.findAll();
+        } else if (user.getRole().equals("Client")) {
+            products = productBean.findAll(user.getUsername());
+        }
+
+        if (products == null) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Role not found in token, role: '"+user.getRole()+"'")
+                    .build();
+        }
+
+        return Response.ok(ProductFullDTO.from(products))
+                .build();
     }
 
     @GET
