@@ -1,13 +1,15 @@
-<script setup lang="ts">
-import OrderList from '@/components/OrderList.vue'
-
-</script>
-
 <template>
-
-
+  <OrderList />
 </template>
 
-<style scoped>
+<script setup lang="ts">
+import OrderList from '@/components/OrderList.vue';
 
+// Se quiseres forçar layout "default" ou outro:
+definePageMeta({
+  layout: 'default'
+});
+</script>
+
+<style scoped>
 </style>

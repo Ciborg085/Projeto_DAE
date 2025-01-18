@@ -12,7 +12,7 @@ public class CORSFilter implements ContainerResponseFilter {
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         // Permitir origem do frontend
-        responseContext.getHeaders().add("Access-Control-Allow-Origin", "http://localhost:3000");
+        responseContext.getHeaders().add("Access-Control-Allow-Origin", "*");
 
         // Permitir cabeçalhos personalizados
         responseContext.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
