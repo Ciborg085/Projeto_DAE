@@ -5,6 +5,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import SensorList from '~/components/SensorList.vue'
+<script setup>
+import SensorList from '@/components/SensorList.vue'
 </script>
