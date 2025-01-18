@@ -8,12 +8,14 @@ import pt.ipleiria.estg.dei.ei.dae.backend.dtos.ProductFullDTO;
 import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.ProductBean;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.backend.security.Authenticated;
 
 import java.util.List;
 
 @Path("/products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Authenticated
 public class ProductService {
     @EJB
     private ProductBean productBean;
