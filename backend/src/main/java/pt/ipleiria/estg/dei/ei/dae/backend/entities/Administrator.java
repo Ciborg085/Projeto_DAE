@@ -1,10 +1,11 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.entities;
 
 import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
 @Entity
-@DiscriminatorColumn(name = "Administrator")
+@DiscriminatorValue("Administrator")
 public class Administrator extends User {
 
     // Required
