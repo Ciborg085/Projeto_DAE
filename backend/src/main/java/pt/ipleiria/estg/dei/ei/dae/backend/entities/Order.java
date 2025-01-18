@@ -20,6 +20,10 @@ import java.util.List;
                 name = "getAllOrdersWithProducts",
                 query = "SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.products ORDER BY o.id"
         ),
+        @NamedQuery(
+                name = "getAllOrdersWithProductsWhereUsername",
+                query = "SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.products WHERE o.client.username = :client_username ORDER BY o.id "
+        ),
 })
 @Table(name = "orders")
 public class Order {

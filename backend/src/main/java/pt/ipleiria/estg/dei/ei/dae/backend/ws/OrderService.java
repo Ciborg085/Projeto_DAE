@@ -1,15 +1,18 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ws;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import pt.ipleiria.estg.dei.ei.dae.backend.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.OrderBean;
 import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.ProductBean;
+import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.UserBean;
 import pt.ipleiria.estg.dei.ei.dae.backend.ejbs.VolumeBean;
-import pt.ipleiria.estg.dei.ei.dae.backend.entities.Order;
-import pt.ipleiria.estg.dei.ei.dae.backend.entities.Volume;
+import pt.ipleiria.estg.dei.ei.dae.backend.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.IllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.MyEntityNotFoundException;
@@ -34,11 +37,31 @@ public class OrderService {
     @EJB
     private VolumeBean volumeBean;
 
+    @EJB
+    private UserBean userBean;
+
+    @Context
+    private SecurityContext securityContext;
+
     @GET
     @Path("/")
-    public Response getAllOrdersWithProducts() {
-        List<Order> orders = orderBean.findAllWithProducts();
+    public Response getAllOrdersWithProducts() throws MyEntityNotFoundException {
+        var principal = securityContext.getUserPrincipal();
+        User user = userBean.find(principal.getName());
+        List<Order> orders = null;
+        if (user.getRole().equals("Administrator")) {
+            orders = orderBean.findAllWithProducts();
 
+        } else if (user.getRole().equals("Client")) {
+            Client client = (Client) user;
+            orders = orderBean.findAllWithProductsWhereUsername(user.getUsername());
+
+        }
+        if (orders == null) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Role not found in token, role: '"+user.getRole()+"'")
+                    .build();
+        }
         List<OrderWithProductsDTO> orderWithProductsDTOS = orders.stream().map(order -> {
             List<ProductSummaryDTO> productSummaryDTOS = ProductSummaryDTO.from(order.getProducts());
 
@@ -52,6 +75,7 @@ public class OrderService {
         }).collect(Collectors.toList());
 
         return Response.ok(orderWithProductsDTOS).build();
+
     }
 
     @GET
@@ -103,11 +127,10 @@ public class OrderService {
         return Response.ok(orderVolumesGetDTO).build();
     }
 
-    // TODO
+    // TODO - not really needed, getOrderById already gives products
     @GET
     @Path("/{order_id}/products")
     public void getOrderProducts(@PathParam("order_id") long order_id) {
-
     }
 
     @POST

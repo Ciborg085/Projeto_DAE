@@ -69,6 +69,12 @@ public class OrderBean {
         return entityManager.createNamedQuery("getAllOrdersWithProducts", Order.class).getResultList();
     }
 
+    public List<Order> findAllWithProductsWhereUsername(String username) {
+        return entityManager.createNamedQuery("getAllOrdersWithProductsWhereUsername", Order.class)
+                .setParameter("client_username",username)
+                .getResultList();
+    }
+
     public List<Volume> findVolumesFromOrder(long id) throws MyEntityNotFoundException {
         Order order = this.find(id);
         // do volumeComplete
