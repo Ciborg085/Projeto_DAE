@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ws;
 
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -54,7 +53,7 @@ public class OrderService {
 
         } else if (user.getRole().equals("Client")) {
             Client client = (Client) user;
-            orders = orderBean.findAllWithProductsWhereUsername(user.getUsername());
+            orders = orderBean.findAllWithProducts(user.getUsername());
 
         }
         if (orders == null) {

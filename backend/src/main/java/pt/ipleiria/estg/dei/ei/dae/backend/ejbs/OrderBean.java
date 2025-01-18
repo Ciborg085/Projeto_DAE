@@ -16,7 +16,6 @@ import pt.ipleiria.estg.dei.ei.dae.backend.exceptions.IllegalArgumentException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Stateless
 public class OrderBean {
@@ -69,7 +68,7 @@ public class OrderBean {
         return entityManager.createNamedQuery("getAllOrdersWithProducts", Order.class).getResultList();
     }
 
-    public List<Order> findAllWithProductsWhereUsername(String username) {
+    public List<Order> findAllWithProducts(String username) {
         return entityManager.createNamedQuery("getAllOrdersWithProductsWhereUsername", Order.class)
                 .setParameter("client_username",username)
                 .getResultList();
