@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.backend.ws;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -44,47 +45,37 @@ public class OrderService {
 
     @GET
     @Path("/")
-    public Response getAllOrdersWithProducts() throws MyEntityNotFoundException{
+    public Response getAllOrdersWithProducts() throws MyEntityNotFoundException {
         var principal = securityContext.getUserPrincipal();
         User user = userBean.find(principal.getName());
+        List<Order> orders = null;
         if (user.getRole().equals("Administrator")) {
-            List<Order> orders = orderBean.findAllWithProducts();
+            orders = orderBean.findAllWithProducts();
 
-            List<OrderWithProductsDTO> orderWithProductsDTOS = orders.stream().map(order -> {
-                List<ProductSummaryDTO> productSummaryDTOS = ProductSummaryDTO.from(order.getProducts());
-
-                return new OrderWithProductsDTO(
-                        order.getId(),
-                        order.getClient().getUsername(),
-                        order.getOrder_status().toString(),
-                        order.getDestination(),
-                        productSummaryDTOS
-                );
-            }).collect(Collectors.toList());
-
-            return Response.ok(orderWithProductsDTOS).build();
         } else if (user.getRole().equals("Client")) {
             Client client = (Client) user;
-            List<Order> orders = orderBean.findAllWithProductsWhereUsername(user.getUsername());
+            orders = orderBean.findAllWithProductsWhereUsername(user.getUsername());
 
-            List<OrderWithProductsDTO> orderWithProductsDTOS = orders.stream().map(order -> {
-                List<ProductSummaryDTO> productSummaryDTOS = ProductSummaryDTO.from(order.getProducts());
-
-                return new OrderWithProductsDTO(
-                        order.getId(),
-                        order.getClient().getUsername(),
-                        order.getOrder_status().toString(),
-                        order.getDestination(),
-                        productSummaryDTOS
-                );
-            }).collect(Collectors.toList());
-
-            return Response.ok(orderWithProductsDTOS).build();
         }
+        if (orders == null) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Role not found in token, role: '"+user.getRole()+"'")
+                    .build();
+        }
+        List<OrderWithProductsDTO> orderWithProductsDTOS = orders.stream().map(order -> {
+            List<ProductSummaryDTO> productSummaryDTOS = ProductSummaryDTO.from(order.getProducts());
 
-        return Response.status(Response.Status.UNAUTHORIZED)
-                .entity("Role not found in token, role: '"+user.getRole()+"'")
-                .build();
+            return new OrderWithProductsDTO(
+                    order.getId(),
+                    order.getClient().getUsername(),
+                    order.getOrder_status().toString(),
+                    order.getDestination(),
+                    productSummaryDTOS
+            );
+        }).collect(Collectors.toList());
+
+        return Response.ok(orderWithProductsDTOS).build();
+
     }
 
     @GET
